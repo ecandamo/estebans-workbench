@@ -1,13 +1,17 @@
-<!-- BEGIN:nextjs-agent-rules -->
+
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
 
-<!-- BEGIN:project-rules -->
+
+
+
+
 # Foundation Project Rules
 
 ## Stack
+
 - Next.js (App Router)
 - TypeScript (strict — never use JavaScript)
 - Tailwind CSS (all styling — no inline styles or CSS modules)
@@ -16,6 +20,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Vercel (deployment)
 
 ## Code Rules
+
 - Always use TypeScript, never JavaScript
 - Use Tailwind CSS for all styling
 - Use shadcn/ui as a base but always customize styling to match Design Philosophy — never use default shadcn appearance as-is
@@ -25,6 +30,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - All API routes go in src/app/api/
 
 ## Folder Structure
+
 - src/components/ui — shadcn/ui components
 - src/components/layout — Layout components (header, footer, sidebar)
 - src/components/shared — Reusable components across pages
@@ -34,12 +40,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - src/styles — Reference tokens and shared style utilities only (live theme is in src/app/globals.css)
 
 ## Design System
+
 - Live design system lives in src/app/globals.css — edit there for any style changes
 - src/styles/design-tokens.ts is a reference document only, not the live source
 - Maintain consistent spacing, colors, and typography across all components
 - Apply tokens with intention — always refer to Design Philosophy for how to use them
 
 ## Design Philosophy
+
 - Target aesthetic: Linear.app level of polish
 - Typography: strong hierarchy, dramatic size contrast between headings and body
 - Color: mostly neutral, accent used sparingly and intentionally
@@ -48,20 +56,26 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Every component should feel intentional and premium, never default
 - Avoid generic AI-generated aesthetics at all costs
 - Reference apps: Linear.app, Stripe Dashboard, Vercel Dashboard
-<!-- END:project-rules -->
 
-<!-- BEGIN:self-improvement-rules -->
+
+
+
+
 # Self-Improvement
+
 - At the start of each session, review .learnings/ files for relevant context
 - After solving non-obvious issues or when I correct you, log the learning to .learnings/LEARNINGS.md
 - Log errors and failed commands to .learnings/ERRORS.md
 - Log feature requests or missing capabilities to .learnings/FEATURE_REQUESTS.md
 - Before major tasks, review recent learnings to avoid repeating past mistakes
 - Periodically consolidate learnings — merge duplicates, remove outdated entries, promote broadly applicable ones to AGENTS.md
-<!-- END:self-improvement-rules -->
 
-<!-- BEGIN:handoff-workflow -->
+
+
+
+
 # Handoff Workflow
+
 - Always read `HANDOFF.md` before starting meaningful work in this repository
 - Use `HANDOFF.md` to understand:
   - project summary
@@ -87,4 +101,4 @@ This version has breaking changes — APIs, conventions, and file structure may 
   - preserve working logic
   - avoid unnecessary rewrites
   - follow the Next Best Step unless a blocker requires otherwise
-<!-- END:handoff-workflow -->
+

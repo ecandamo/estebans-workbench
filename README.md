@@ -3,6 +3,7 @@
 Esteban's starter template for all new projects.
 
 ## Stack
+
 - Next.js (App Router)
 - TypeScript
 - Tailwind CSS
@@ -11,6 +12,7 @@ Esteban's starter template for all new projects.
 - Vercel (deployment)
 
 ## Getting Started
+
 1. Create a new repo from this template
 2. Clone it locally
 3. Run `npm install`
@@ -18,10 +20,12 @@ Esteban's starter template for all new projects.
 5. Start building
 
 ## Design System
+
 Live design system lives in `src/app/globals.css` — edit there for style changes
 `src/styles/design-tokens.ts` is a reference document only, not the live source
 
 ## Design Philosophy
+
 - Target aesthetic: premium SaaS-level polish
 - Typography: strong hierarchy, dramatic size contrast
 - Color: mostly neutral, accent used sparingly
@@ -30,6 +34,7 @@ Live design system lives in `src/app/globals.css` — edit there for style chang
 - Every component intentional and premium, never default
 
 ## Folder Structure
+
 - `src/components/ui` — shadcn/ui components
 - `src/components/layout` — Layout components (header, footer, sidebar)
 - `src/components/shared` — Reusable components across pages
@@ -40,6 +45,7 @@ Live design system lives in `src/app/globals.css` — edit there for style chang
 - `public/images` — Static images
 
 ## Rules
+
 - TypeScript only, no JavaScript
 - Tailwind CSS for all styling
 - shadcn/ui as a base — always customize to match Design Philosophy, never use default appearance as-is

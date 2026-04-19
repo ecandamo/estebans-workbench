@@ -1,6 +1,6 @@
 "use client";
 
-import { Share2, Sliders, Sun, Moon } from "lucide-react";
+import { Link2, Link2Off, Share2, Sliders, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { useIsClient } from "@/hooks/use-is-client";
@@ -10,8 +10,12 @@ type Props = {
   readOnly: boolean;
   showTweaks: boolean;
   onToggleTweaks: () => void;
-  /** When false, Share / Tweaks are hidden (no active workspace). */
   showActions?: boolean;
+  // Share management (owner view only)
+  shareToken?: string | null;
+  shareEnabled?: boolean;
+  onGenerateShare?: () => Promise<void>;
+  onRevokeShare?: () => Promise<void>;
 };
 
 export function TopBar({
@@ -20,20 +24,46 @@ export function TopBar({
   showTweaks,
   onToggleTweaks,
   showActions = true,
+  shareToken,
+  shareEnabled,
+  onGenerateShare,
+  onRevokeShare,
 }: Props) {
   const [copied, setCopied] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
   const isClient = useIsClient();
   const { resolvedTheme, setTheme } = useTheme();
 
-  function handleShare() {
-    const url = `${window.location.origin}/?view=1`;
+  const isDark = resolvedTheme === "dark";
+
+  function copyShareLink() {
+    if (!shareToken) return;
+    const url = `${window.location.origin}/share/${shareToken}`;
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   }
 
-  const isDark = resolvedTheme === "dark";
+  async function handleShareClick() {
+    if (!onGenerateShare) return;
+    setShareLoading(true);
+    try {
+      await onGenerateShare();
+    } finally {
+      setShareLoading(false);
+    }
+  }
+
+  async function handleRevokeClick() {
+    if (!onRevokeShare) return;
+    setShareLoading(true);
+    try {
+      await onRevokeShare();
+    } finally {
+      setShareLoading(false);
+    }
+  }
 
   return (
     <header className="flex items-center min-h-12 px-5 shrink-0 bg-background gap-4">
@@ -55,20 +85,42 @@ export function TopBar({
           </button>
         )}
 
-        {copied && (
-          <span className="text-xs text-muted-foreground">Link copied!</span>
-        )}
-
         {!readOnly && showActions && (
           <>
-            <button
-              type="button"
-              onClick={handleShare}
-              className="flex min-h-11 items-center gap-1.5 rounded-md px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <Share2 size={12} aria-hidden />
-              Share
-            </button>
+            {shareEnabled && shareToken ? (
+              <>
+                {copied && (
+                  <span className="text-xs text-muted-foreground">Link copied!</span>
+                )}
+                <button
+                  type="button"
+                  onClick={copyShareLink}
+                  className="flex min-h-11 items-center gap-1.5 rounded-md px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <Link2 size={12} aria-hidden />
+                  Copy link
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRevokeClick}
+                  disabled={shareLoading}
+                  className="flex min-h-11 items-center gap-1.5 rounded-md px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                >
+                  <Link2Off size={12} aria-hidden />
+                  Revoke
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={handleShareClick}
+                disabled={shareLoading}
+                className="flex min-h-11 items-center gap-1.5 rounded-md px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+              >
+                <Share2 size={12} aria-hidden />
+                {shareLoading ? "Generating…" : "Share"}
+              </button>
+            )}
 
             <button
               type="button"
