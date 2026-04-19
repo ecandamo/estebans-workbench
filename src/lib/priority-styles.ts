@@ -12,3 +12,17 @@ export const priorityChipClass: Record<Priority, string> = {
     "bg-accent/15 text-foreground border border-accent/40",
   low: "bg-muted text-muted-foreground border border-border",
 };
+
+/** Full names for forms and accessible labels */
+export const priorityLabel: Record<Priority, string> = {
+  high: "High",
+  medium: "Medium",
+  low: "Low",
+};
+
+/** Short labels for dense chips on board tiles */
+export const priorityLabelCompact: Record<Priority, string> = {
+  high: "High",
+  medium: "Med",
+  low: "Low",
+};

@@ -61,25 +61,23 @@ export function WorkspaceSidebar({
     : undefined;
 
   return (
-    <aside className="flex flex-col w-52 shrink-0 h-full border-r border-border bg-background">
+    <aside className="flex flex-col w-52 shrink-0 h-full border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
       {/* Wordmark */}
-      <div className="flex h-12 shrink-0 items-center px-5 border-b border-border">
-        <span
-          className="text-[1.1rem] leading-tight text-foreground whitespace-nowrap"
-          style={{ fontFamily: "var(--font-roboto)" }}
-        >
-          <span className="italic font-normal">Esteban&apos;s</span>
-          <span className="font-semibold"> Workbench</span>
+      <div className="flex min-h-12 shrink-0 items-center border-b border-sidebar-border bg-muted/35 px-4 sm:px-6">
+        <span className="font-serif text-[1.1rem] font-semibold leading-tight tracking-tight text-foreground whitespace-nowrap">
+          <span className="font-normal italic">Esteban&apos;s</span>
+          <span> Workbench</span>
         </span>
       </div>
 
       {/* Workspace list */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2">
-        <p className="px-3 mb-1 text-[10px] font-semibold tracking-widest uppercase text-muted-foreground">
+      <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <p className="mb-2 px-1 text-label font-semibold uppercase tracking-widest text-muted-foreground/90">
           Workspaces
         </p>
+        <div className="flex flex-col gap-1">
         {workspaces.map((ws) => (
-          <div key={ws.id} className="mb-1 last:mb-0">
+          <div key={ws.id}>
             <div className="group flex items-stretch gap-0.5 rounded-md">
               <button
                 type="button"
@@ -87,8 +85,8 @@ export function WorkspaceSidebar({
                 className={cn(
                   "min-w-0 flex-1 text-left px-3 py-2 rounded-md text-sm transition-colors",
                   ws.id === activeId
-                    ? "bg-accent/15 text-foreground font-medium"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-primary/12 text-foreground font-medium ring-1 ring-inset ring-primary/20"
+                    : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                 )}
               >
                 <span className="block truncate">{ws.name}</span>
@@ -109,6 +107,7 @@ export function WorkspaceSidebar({
             </div>
           </div>
         ))}
+        </div>
       </nav>
 
       <AlertDialog.Root
@@ -121,10 +120,10 @@ export function WorkspaceSidebar({
           <AlertDialog.Overlay className="fixed inset-0 z-[100] bg-background/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
           <AlertDialog.Content className="fixed left-1/2 top-1/2 z-[101] w-[min(calc(100vw-2rem),22rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-card p-5 shadow-lg outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
             <AlertDialog.Title className="text-sm font-medium text-foreground">
-              Delete {pendingWs?.name}?
+              Delete workspace &ldquo;{pendingWs?.name}&rdquo;?
             </AlertDialog.Title>
             <AlertDialog.Description className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              All cards in this workspace will be removed. This cannot be undone.
+              Every card in this workspace will be deleted. You can&apos;t undo this.
             </AlertDialog.Description>
             <div className="mt-5 flex justify-end gap-2">
               <AlertDialog.Cancel asChild>
@@ -155,7 +154,7 @@ export function WorkspaceSidebar({
 
       {/* Footer */}
       {!readOnly && onAddWorkspace && (
-        <div className="px-4 py-4 border-t border-border space-y-2">
+        <div className="space-y-2 border-t border-sidebar-border px-3 py-4 sm:px-4">
           {adding ? (
             <div className="flex flex-col gap-2">
               <label htmlFor={`${newWorkspaceFormId}-name`} className="sr-only">
@@ -177,7 +176,7 @@ export function WorkspaceSidebar({
               <div className="space-y-1">
                 <p
                   id={`${newWorkspaceFormId}-columns-label`}
-                  className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-0.5"
+                  className="text-label font-semibold uppercase tracking-wider text-muted-foreground px-0.5"
                 >
                   Columns
                 </p>
@@ -203,7 +202,7 @@ export function WorkspaceSidebar({
                       />
                       <button
                         type="button"
-                        className="shrink-0 p-1 rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-30"
                         aria-label="Remove column"
                         disabled={stageInputs.length <= 1}
                         onClick={() => removeStageRow(index)}
@@ -215,7 +214,7 @@ export function WorkspaceSidebar({
                 </div>
                 <button
                   type="button"
-                  className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground"
+                  className="flex min-h-10 items-center gap-1 rounded-md px-0.5 text-meta text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar"
                   onClick={addStageRow}
                 >
                   <Plus size={12} />
@@ -225,7 +224,7 @@ export function WorkspaceSidebar({
               <div className="flex gap-2 pt-0.5">
                 <button
                   type="button"
-                  className="text-xs px-2.5 py-1 rounded-md bg-foreground text-background hover:opacity-90 disabled:opacity-40"
+                  className="text-xs px-2.5 py-1 rounded-md bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-40"
                   onClick={submitNewWorkspace}
                   disabled={
                     !newName.trim() || stageInputs.every((s) => !s.trim())
@@ -245,7 +244,7 @@ export function WorkspaceSidebar({
           ) : (
             <button
               type="button"
-              className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors text-left"
+              className="w-full text-xs text-muted-foreground hover:text-primary transition-colors text-left"
               onClick={() => {
                 setStageInputs([...DEFAULT_NEW_WORKSPACE_STAGE_NAMES]);
                 setAdding(true);

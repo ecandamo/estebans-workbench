@@ -24,13 +24,19 @@ export default function LoginPage() {
       if (mode === "signup") {
         const result = await signUp.email({ email, password, name });
         if (result.error) {
-          setError(result.error.message ?? "Sign up failed.");
+          setError(
+            result.error.message ??
+              "Something didn't work. Check your details and try again."
+          );
           return;
         }
       } else {
         const result = await signIn.email({ email, password });
         if (result.error) {
-          setError(result.error.message ?? "Sign in failed.");
+          setError(
+            result.error.message ??
+              "Something didn't work. Check your email and password and try again."
+          );
           return;
         }
       }
@@ -47,11 +53,13 @@ export default function LoginPage() {
     <main className="flex h-full items-center justify-center bg-background">
       <div className="w-full max-w-sm space-y-6 px-4">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          <h1 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
             Esteban&apos;s Workbench
           </h1>
           <p className="text-sm text-muted-foreground">
-            {mode === "signin" ? "Sign in to your workbench" : "Create your account"}
+            {mode === "signin"
+              ? "Sign in to open your workbench"
+              : "Create an account to use your workbench"}
           </p>
         </div>
 
@@ -128,7 +136,13 @@ export default function LoginPage() {
             aria-busy={loading}
             className="min-h-11 w-full rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
-            {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+            {loading
+              ? mode === "signin"
+                ? "Signing in…"
+                : "Creating account…"
+              : mode === "signin"
+                ? "Sign in"
+                : "Create account"}
           </button>
         </form>
 

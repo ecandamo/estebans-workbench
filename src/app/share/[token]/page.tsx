@@ -7,6 +7,9 @@ import { KanbanBoard } from "@/components/shared/kanban-board";
 import { TopBar } from "@/components/shared/top-bar";
 import type { BoardState } from "@/types/kanban";
 
+const MSG_NETWORK =
+  "Can't reach the server. Check your connection and try again.";
+
 export default function SharePage() {
   const { token } = useParams<{ token: string }>();
   const [board, setBoard] = useState<BoardState | null>(null);
@@ -17,13 +20,18 @@ export default function SharePage() {
     fetch(`/api/share/${token}`)
       .then((res) => {
         if (!res.ok) {
-          setError("This share link is invalid or has been revoked.");
+          setError(
+            "This link isn't valid, or the owner stopped sharing it."
+          );
           return null;
         }
         return res.json();
       })
       .then((data) => {
         if (data) setBoard(data.board);
+      })
+      .catch(() => {
+        setError(MSG_NETWORK);
       });
   }, [token]);
 
@@ -31,7 +39,9 @@ export default function SharePage() {
     return (
       <main className="flex h-full flex-col items-center justify-center gap-2 px-4">
         <div role="alert" className="flex flex-col items-center gap-2 text-center">
-          <p className="text-sm font-medium text-foreground">Link unavailable</p>
+          <p className="font-serif text-base font-semibold text-foreground">
+            Cannot open shared board
+          </p>
           <p className="text-xs text-muted-foreground max-w-sm">{error}</p>
         </div>
       </main>
@@ -46,7 +56,7 @@ export default function SharePage() {
         aria-busy
         className="flex h-full items-center justify-center"
       >
-        <span className="text-sm text-muted-foreground">Loading…</span>
+        <span className="text-sm text-muted-foreground">Loading shared board…</span>
       </div>
     );
   }
@@ -81,9 +91,11 @@ export default function SharePage() {
           />
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
-            <p className="text-sm font-medium text-foreground">No workspace</p>
+            <p className="font-serif text-base font-semibold text-foreground">
+              Nothing here yet
+            </p>
             <p className="text-xs text-muted-foreground max-w-sm">
-              There are no workspaces to show.
+              This shared board doesn&apos;t include a workspace.
             </p>
           </div>
         )}

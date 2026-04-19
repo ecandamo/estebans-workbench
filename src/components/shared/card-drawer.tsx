@@ -13,7 +13,7 @@ import {
 import { X, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { generateId } from "@/lib/kanban-data";
-import { priorityChipClass } from "@/lib/priority-styles";
+import { priorityChipClass, priorityLabel } from "@/lib/priority-styles";
 import type { KanbanCard, Priority, ChecklistItem } from "@/types/kanban";
 
 const PRIORITIES: Priority[] = ["high", "medium", "low"];
@@ -156,13 +156,13 @@ export function CardDrawer({
                     disabled={readOnly}
                     onClick={() => patch({ priority: p })}
                     className={cn(
-                      "rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide transition-[background-color,border-color,color]",
+                      "rounded border px-2 py-1 text-label font-semibold uppercase tracking-wide transition-[background-color,border-color,color]",
                       local.priority === p
                         ? priorityChipClass[p]
                         : "border-transparent text-muted-foreground hover:bg-muted"
                     )}
                   >
-                    {p}
+                    {priorityLabel[p]}
                   </button>
                 ))}
               </div>
@@ -201,7 +201,7 @@ export function CardDrawer({
             </div>
 
             <div>
-              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="mb-1.5 text-label font-semibold uppercase tracking-widest text-muted-foreground">
                 Description
               </p>
               {readOnly ? (
@@ -220,7 +220,7 @@ export function CardDrawer({
 
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                <p className="text-label font-semibold uppercase tracking-widest text-muted-foreground">
                   Checklist {total > 0 && `· ${done}/${total}`}
                 </p>
                 {!readOnly && (
@@ -291,13 +291,15 @@ export function CardDrawer({
             </div>
 
             <div>
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="mb-2 text-label font-semibold uppercase tracking-widest text-muted-foreground">
                 Activity
               </p>
               <div className="space-y-2">
                 {[...local.activity].reverse().map((entry) => (
                   <div key={entry.id} className="flex gap-2 text-xs">
-                    <span className="shrink-0 text-muted-foreground">{formatTs(entry.timestamp)}</span>
+                    <span className="shrink-0 font-mono tabular-nums text-muted-foreground">
+                      {formatTs(entry.timestamp)}
+                    </span>
                     <span className="text-foreground/70">{entry.text}</span>
                   </div>
                 ))}
@@ -311,7 +313,7 @@ export function CardDrawer({
               <div>
                 <label
                   htmlFor={commentFieldId}
-                  className="mb-1.5 block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground"
+                  className="mb-1.5 block text-label font-semibold uppercase tracking-widest text-muted-foreground"
                 >
                   Add comment
                 </label>

@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
-import { priorityChipClass } from "@/lib/priority-styles";
+import { priorityChipClass, priorityLabelCompact } from "@/lib/priority-styles";
 import type { KanbanCard, Priority } from "@/types/kanban";
 
 function formatDate(iso: string): string {
@@ -83,11 +83,12 @@ export function KanbanCardTile({
       <div className="flex items-start gap-2">
         <span
           className={cn(
-            "mt-[2px] shrink-0 text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded",
+            "mt-px shrink-0 text-label font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded",
             priorityChipClass[card.priority as Priority]
           )}
+          aria-label={`Priority: ${priorityLabelCompact[card.priority as Priority]}`}
         >
-          {card.priority.slice(0, 3)}
+          {priorityLabelCompact[card.priority as Priority]}
         </span>
         <p className="text-sm font-medium text-foreground leading-snug">{card.title}</p>
       </div>
@@ -100,7 +101,7 @@ export function KanbanCardTile({
               style={{ width: `${pct}%` }}
             />
           </div>
-          <span className="text-[10px] text-muted-foreground shrink-0">
+          <span className="text-label text-muted-foreground shrink-0">
             {done}/{total}
           </span>
         </div>
@@ -109,7 +110,7 @@ export function KanbanCardTile({
       {card.dueDate && (
         <p
           className={cn(
-            "mt-2 text-[11px]",
+            "mt-2 text-meta",
             overdue ? "text-destructive font-medium" : "text-muted-foreground"
           )}
         >

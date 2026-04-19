@@ -163,7 +163,9 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
     <div className="relative flex-1 flex overflow-hidden">
       {/* Board scroll area */}
       <div className="flex-1 overflow-x-auto overflow-y-hidden">
-        <div className="flex h-full gap-3 px-5 py-4" style={{ minWidth: "max-content" }}>
+        <div
+          className="flex h-full min-w-max gap-4 px-4 py-5 sm:px-6"
+        >
           {currentWorkspace.stages.map((stage) => (
             <StageColumn
               key={stage.id}
@@ -229,26 +231,30 @@ function StageColumn({
   onCardKeyboardMove,
 }: ColumnProps) {
   return (
-    <div className="flex flex-col w-64 shrink-0 h-full">
+    <div className="flex h-full w-64 shrink-0 flex-col">
       {/* Column header */}
-      <div className="flex items-center gap-2 mb-3 px-1">
-        <span className="text-xs font-semibold text-foreground">{stage.name}</span>
-        <span className="text-[10px] text-muted-foreground">{cards.length}</span>
+      <div className="mb-2 flex items-center justify-between gap-2 px-0.5">
+        <span className="min-w-0 truncate text-xs font-semibold text-foreground">
+          {stage.name}
+        </span>
+        <span className="shrink-0 rounded-full bg-primary/12 px-2 py-0.5 text-center text-label font-medium tabular-nums text-primary">
+          {cards.length}
+        </span>
       </div>
 
       {/* Drop zone */}
       <div
         className={cn(
-          "flex-1 rounded-xl border border-dashed transition-colors overflow-y-auto",
+          "flex-1 rounded-xl border border-dashed transition-colors duration-150 overflow-y-auto",
           isDropTarget
-            ? "border-accent/60 bg-accent/5"
-            : "border-transparent"
+            ? "border-accent/60 bg-accent/8"
+            : "border-primary/12 bg-muted/25"
         )}
         onDragOver={onDragOver}
         onDrop={onDrop}
         onDragLeave={onDragLeave}
       >
-        <div className="p-1.5 space-y-2">
+        <div className="space-y-2.5 p-2">
           {cards.map((card) => (
             <KanbanCardTile
               key={card.id}
@@ -267,7 +273,7 @@ function StageColumn({
             <button
               type="button"
               onClick={onAddCard}
-              className="w-full flex items-center gap-1.5 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              className="flex min-h-10 w-full items-center gap-1.5 rounded-lg px-3 py-2 text-xs text-muted-foreground transition-colors duration-150 hover:bg-muted/80 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <Plus size={12} />
               Add card
