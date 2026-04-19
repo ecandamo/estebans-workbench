@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { DEFAULT_NEW_WORKSPACE_STAGE_NAMES } from "@/lib/kanban-data";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,7 @@ export function WorkspaceSidebar({
   const [newName, setNewName] = useState("");
   const [stageInputs, setStageInputs] = useState<string[]>(() => [...DEFAULT_NEW_WORKSPACE_STAGE_NAMES]);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const newWorkspaceFormId = useId();
 
   function resetAddForm() {
     setNewName("");
@@ -71,8 +72,8 @@ export function WorkspaceSidebar({
           className="text-[1.1rem] leading-tight text-foreground whitespace-nowrap"
           style={{ fontFamily: "var(--font-roboto)" }}
         >
-          <span className="italic">Esteban&apos;s</span>
-          <span> Workbench</span>
+          <span className="italic font-normal">Esteban&apos;s</span>
+          <span className="font-semibold"> Workbench</span>
         </span>
       </div>
 
@@ -151,8 +152,13 @@ export function WorkspaceSidebar({
         <div className="px-4 py-4 border-t border-border space-y-2">
           {adding ? (
             <div className="flex flex-col gap-2">
+              <label htmlFor={`${newWorkspaceFormId}-name`} className="sr-only">
+                Workspace name
+              </label>
               <input
+                id={`${newWorkspaceFormId}-name`}
                 autoFocus
+                autoComplete="off"
                 className="w-full text-sm bg-muted/50 border border-border rounded-md px-2.5 py-1.5 outline-none focus:border-accent"
                 placeholder="Workspace name"
                 value={newName}
@@ -163,13 +169,24 @@ export function WorkspaceSidebar({
                 }}
               />
               <div className="space-y-1">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-0.5">
+                <p
+                  id={`${newWorkspaceFormId}-columns-label`}
+                  className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-0.5"
+                >
                   Columns
                 </p>
-                <div className="max-h-40 overflow-y-auto space-y-1 pr-0.5">
+                <div
+                  className="max-h-40 overflow-y-auto space-y-1 pr-0.5"
+                  role="group"
+                  aria-labelledby={`${newWorkspaceFormId}-columns-label`}
+                >
                   {stageInputs.map((row, index) => (
                     <div key={index} className="flex items-center gap-1">
+                      <label htmlFor={`${newWorkspaceFormId}-stage-${index}`} className="sr-only">
+                        {`Column ${index + 1} name`}
+                      </label>
                       <input
+                        id={`${newWorkspaceFormId}-stage-${index}`}
                         className="min-w-0 flex-1 text-xs bg-background border border-border rounded px-2 py-1 outline-none focus:border-accent"
                         placeholder={`Stage ${index + 1}`}
                         value={row}

@@ -17,7 +17,8 @@ function BoardApp() {
   const [showTweaks, setShowTweaks] = useState(false);
 
   useEffect(() => {
-    setBoard(loadBoard());
+    // localStorage is unavailable during SSR; load after mount (see react-hooks/set-state-in-effect).
+    queueMicrotask(() => setBoard(loadBoard()));
   }, []);
 
   function handleBoardChange(next: BoardState) {

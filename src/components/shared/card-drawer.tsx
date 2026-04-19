@@ -1,40 +1,57 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import {
+  Close,
+  Content,
+  Description,
+  Dialog,
+  Overlay,
+  Portal,
+  Title,
+} from "@radix-ui/react-dialog";
 import { X, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { generateId } from "@/lib/kanban-data";
+import { priorityChipClass } from "@/lib/priority-styles";
 import type { KanbanCard, Priority, ChecklistItem } from "@/types/kanban";
 
 const PRIORITIES: Priority[] = ["high", "medium", "low"];
 
-const priorityColors: Record<Priority, string> = {
-  high: "bg-red-100 text-red-700 border-red-200",
-  medium: "bg-amber-100 text-amber-700 border-amber-200",
-  low: "bg-muted text-muted-foreground border-border",
-};
-
 function formatTs(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
-    month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
 type Props = {
   card: KanbanCard;
+  stages: { id: string; name: string }[];
+  onMoveToStage?: (stageId: string) => void;
   readOnly: boolean;
   onUpdate: (card: KanbanCard) => void;
   onClose: () => void;
   onDelete?: () => void;
 };
 
-export function CardDrawer({ card, readOnly, onUpdate, onClose, onDelete }: Props) {
+export function CardDrawer({
+  card,
+  stages,
+  onMoveToStage,
+  readOnly,
+  onUpdate,
+  onClose,
+  onDelete,
+}: Props) {
   const [local, setLocal] = useState<KanbanCard>(card);
   const [comment, setComment] = useState("");
-  const drawerRef = useRef<HTMLDivElement>(null);
 
-  // Sync if card changes externally
-  useEffect(() => { setLocal(card); }, [card]);
+  useEffect(() => {
+    setLocal(card);
+  }, [card]);
 
   function patch(partial: Partial<KanbanCard>) {
     const updated = { ...local, ...partial };
@@ -75,198 +92,267 @@ export function CardDrawer({ card, readOnly, onUpdate, onClose, onDelete }: Prop
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-      />
-
-      {/* Drawer */}
-      <div
-        ref={drawerRef}
-        className="fixed top-0 right-0 h-full w-[420px] z-50 bg-card border-l border-border flex flex-col shadow-xl overflow-hidden"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
-          {readOnly ? (
-            <p className="text-sm font-medium text-foreground">{local.title}</p>
-          ) : (
-            <input
-              className="flex-1 text-sm font-medium text-foreground bg-transparent outline-none border-b border-transparent focus:border-border transition-colors mr-3"
-              value={local.title}
-              onChange={(e) => patch({ title: e.target.value })}
-            />
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <Portal>
+        <Overlay className="fixed inset-0 z-40 bg-background/70 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <Content
+          className={cn(
+            "fixed top-0 right-0 z-50 flex h-full w-[min(100vw,420px)] flex-col overflow-hidden border-l border-border bg-card shadow-xl outline-none",
+            "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right duration-200"
           )}
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
-            <X size={16} />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
-          {/* Priority + due date row */}
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1.5">
-              {PRIORITIES.map((p) => (
-                <button
-                  key={p}
-                  disabled={readOnly}
-                  onClick={() => patch({ priority: p })}
-                  className={cn(
-                    "text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded border transition-all",
-                    local.priority === p ? priorityColors[p] : "border-transparent text-muted-foreground hover:bg-muted"
-                  )}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-            <div className="ml-auto">
-              {readOnly ? (
-                <span className="text-xs text-muted-foreground">{local.dueDate ?? "No due date"}</span>
-              ) : (
-                <input
-                  type="date"
-                  className="text-xs text-muted-foreground bg-transparent border border-border rounded px-2 py-1 outline-none focus:border-accent"
-                  value={local.dueDate ?? ""}
-                  onChange={(e) => patch({ dueDate: e.target.value || null })}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Description */}
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Description</p>
+          onOpenAutoFocus={(e) => {
+            const root = e.currentTarget as HTMLElement | null;
+            if (!root) return;
+            const target = root.querySelector<HTMLElement>(
+              "[data-autofocus-card-drawer]"
+            );
+            if (target) {
+              e.preventDefault();
+              target.focus();
+            }
+          }}
+        >
+          <div className="flex items-center justify-between border-b border-border px-5 py-4 shrink-0">
             {readOnly ? (
-              <p className="text-sm text-foreground/80 leading-relaxed">{local.description || "—"}</p>
+              <Title className="text-sm font-medium text-foreground pr-3">
+                {local.title}
+              </Title>
             ) : (
-              <textarea
-                className="w-full text-sm text-foreground/80 leading-relaxed bg-muted/40 border border-border rounded-md px-3 py-2 outline-none resize-none focus:border-accent transition-colors"
-                rows={3}
-                value={local.description}
-                onChange={(e) => patch({ description: e.target.value })}
-              />
-            )}
-          </div>
-
-          {/* Checklist */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                Checklist {total > 0 && `· ${done}/${total}`}
-              </p>
-              {!readOnly && (
-                <button
-                  onClick={addChecklistItem}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Plus size={13} />
-                </button>
-              )}
-            </div>
-
-            {total > 0 && (
-              <div className="h-[3px] rounded-full bg-muted mb-3 overflow-hidden">
-                <div
-                  className="h-full bg-accent rounded-full transition-all"
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-            )}
-
-            <div className="space-y-1.5">
-              {local.checklist.map((item) => (
-                <div key={item.id} className="flex items-center gap-2 group/item">
-                  <input
-                    type="checkbox"
-                    checked={item.done}
-                    disabled={readOnly}
-                    onChange={() => toggleChecklist(item.id)}
-                    className="accent-accent shrink-0"
-                  />
-                  {readOnly ? (
-                    <span className={cn("text-sm flex-1", item.done && "line-through text-muted-foreground")}>
-                      {item.text}
-                    </span>
-                  ) : (
-                    <input
-                      className={cn(
-                        "text-sm flex-1 bg-transparent outline-none border-b border-transparent focus:border-border",
-                        item.done && "line-through text-muted-foreground"
-                      )}
-                      value={item.text}
-                      onChange={(e) => updateChecklistText(item.id, e.target.value)}
-                    />
-                  )}
-                  {!readOnly && (
-                    <button
-                      onClick={() => removeChecklistItem(item.id)}
-                      className="opacity-0 group-hover/item:opacity-100 text-muted-foreground hover:text-red-500 transition-all"
-                    >
-                      <Trash2 size={11} />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Activity */}
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">Activity</p>
-            <div className="space-y-2">
-              {[...local.activity].reverse().map((entry) => (
-                <div key={entry.id} className="flex gap-2 text-xs">
-                  <span className="text-muted-foreground shrink-0">{formatTs(entry.timestamp)}</span>
-                  <span className="text-foreground/70">{entry.text}</span>
-                </div>
-              ))}
-              {local.activity.length === 0 && (
-                <p className="text-xs text-muted-foreground">No activity yet.</p>
-              )}
-            </div>
-          </div>
-
-          {/* Comment */}
-          {!readOnly && (
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Add comment</p>
-              <div className="flex gap-2">
+              <>
+                <Title className="sr-only">Edit card: {local.title}</Title>
                 <input
-                  className="flex-1 text-sm bg-muted/40 border border-border rounded-md px-3 py-1.5 outline-none focus:border-accent transition-colors"
-                  placeholder="Leave a note..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") submitComment(); }}
+                  data-autofocus-card-drawer
+                  className="mr-3 flex-1 border-b border-transparent bg-transparent text-sm font-medium text-foreground outline-none transition-[border-color] focus:border-border"
+                  aria-label="Card title"
+                  value={local.title}
+                  onChange={(e) => patch({ title: e.target.value })}
                 />
-                <button
-                  onClick={submitComment}
-                  className="text-xs px-3 py-1.5 bg-foreground text-background rounded-md hover:opacity-80 transition-opacity"
-                >
-                  Post
-                </button>
+              </>
+            )}
+            <Close asChild>
+              <button
+                type="button"
+                className="shrink-0 rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Close card details"
+              >
+                <X size={16} aria-hidden />
+              </button>
+            </Close>
+          </div>
+
+          <div className="flex-1 space-y-6 overflow-y-auto px-5 py-4">
+            <Description className="sr-only">
+              Card details, checklist, activity, and comments for this work item.
+            </Description>
+
+            {/* Column + priority row */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap gap-1.5">
+                {PRIORITIES.map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    disabled={readOnly}
+                    onClick={() => patch({ priority: p })}
+                    className={cn(
+                      "rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide transition-[background-color,border-color,color]",
+                      local.priority === p
+                        ? priorityChipClass[p]
+                        : "border-transparent text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    {p}
+                  </button>
+                ))}
               </div>
+
+              <div className="ml-auto flex min-w-0 items-center gap-2">
+                <label
+                  htmlFor={`card-stage-${local.id}`}
+                  className="text-xs text-muted-foreground shrink-0"
+                >
+                  Column
+                </label>
+                {readOnly ? (
+                  <span className="text-xs text-muted-foreground">
+                    {stages.find((s) => s.id === local.stageId)?.name ?? "—"}
+                  </span>
+                ) : (
+                  <select
+                    id={`card-stage-${local.id}`}
+                    className="max-w-[200px] rounded border border-border bg-background px-2 py-1 text-xs text-foreground outline-none transition-[border-color] focus:border-accent"
+                    value={local.stageId}
+                    onChange={(e) => {
+                      const next = e.target.value;
+                      if (next !== local.stageId) {
+                        onMoveToStage?.(next);
+                      }
+                    }}
+                  >
+                    {stages.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                Description
+              </p>
+              {readOnly ? (
+                <p className="text-sm leading-relaxed text-foreground/80">
+                  {local.description || "—"}
+                </p>
+              ) : (
+                <textarea
+                  className="w-full resize-none rounded-md border border-border bg-muted/40 px-3 py-2 text-sm leading-relaxed text-foreground/80 outline-none transition-[border-color] focus:border-accent"
+                  rows={3}
+                  value={local.description}
+                  onChange={(e) => patch({ description: e.target.value })}
+                />
+              )}
+            </div>
+
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  Checklist {total > 0 && `· ${done}/${total}`}
+                </p>
+                {!readOnly && (
+                  <button
+                    type="button"
+                    onClick={addChecklistItem}
+                    className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-11 min-w-11 flex items-center justify-center"
+                    aria-label="Add checklist item"
+                  >
+                    <Plus size={13} aria-hidden />
+                  </button>
+                )}
+              </div>
+
+              {total > 0 && (
+                <div className="mb-3 h-[3px] overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-accent transition-[width] duration-200"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                {local.checklist.map((item) => (
+                  <div key={item.id} className="group/item flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      className="accent-accent h-4 w-4 shrink-0"
+                      checked={item.done}
+                      disabled={readOnly}
+                      onChange={() => toggleChecklist(item.id)}
+                      aria-label={`Done: ${item.text}`}
+                    />
+                    {readOnly ? (
+                      <span
+                        className={cn(
+                          "flex-1 text-sm",
+                          item.done && "text-muted-foreground line-through"
+                        )}
+                      >
+                        {item.text}
+                      </span>
+                    ) : (
+                      <input
+                        className={cn(
+                          "min-w-0 flex-1 border-b border-transparent bg-transparent text-sm outline-none transition-[border-color] focus:border-border",
+                          item.done && "text-muted-foreground line-through"
+                        )}
+                        aria-label="Checklist item text"
+                        value={item.text}
+                        onChange={(e) => updateChecklistText(item.id, e.target.value)}
+                      />
+                    )}
+                    {!readOnly && (
+                      <button
+                        type="button"
+                        onClick={() => removeChecklistItem(item.id)}
+                        className="min-h-11 min-w-11 shrink-0 rounded-md p-2 text-muted-foreground opacity-0 transition-[opacity,color] group-hover/item:opacity-100 hover:text-destructive focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        aria-label={`Remove checklist item: ${item.text}`}
+                      >
+                        <Trash2 size={11} aria-hidden />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                Activity
+              </p>
+              <div className="space-y-2">
+                {[...local.activity].reverse().map((entry) => (
+                  <div key={entry.id} className="flex gap-2 text-xs">
+                    <span className="shrink-0 text-muted-foreground">{formatTs(entry.timestamp)}</span>
+                    <span className="text-foreground/70">{entry.text}</span>
+                  </div>
+                ))}
+                {local.activity.length === 0 && (
+                  <p className="text-xs text-muted-foreground">No activity yet.</p>
+                )}
+              </div>
+            </div>
+
+            {!readOnly && (
+              <div>
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  Add comment
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <input
+                    className="min-h-11 min-w-0 flex-1 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm outline-none transition-[border-color] focus:border-accent"
+                    placeholder="Leave a note..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") submitComment();
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={submitComment}
+                    className="min-h-11 rounded-md bg-foreground px-3 text-xs text-background transition-opacity hover:opacity-80"
+                  >
+                    Post
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {!readOnly && onDelete && (
+            <div className="shrink-0 border-t border-border bg-card px-5 py-3">
+              <button
+                type="button"
+                onClick={() => {
+                  if (
+                    typeof window !== "undefined" &&
+                    window.confirm("Delete this card? This cannot be undone.")
+                  ) {
+                    onDelete();
+                  }
+                }}
+                className="text-xs font-medium text-destructive transition-colors hover:text-destructive/90"
+              >
+                Delete card
+              </button>
             </div>
           )}
-        </div>
-
-        {!readOnly && onDelete && (
-          <div className="border-t border-border px-5 py-3 shrink-0 bg-card">
-            <button
-              type="button"
-              onClick={() => {
-                if (typeof window !== "undefined" && window.confirm("Delete this card? This cannot be undone.")) {
-                  onDelete();
-                }
-              }}
-              className="text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-            >
-              Delete card
-            </button>
-          </div>
-        )}
-      </div>
-    </>
+        </Content>
+      </Portal>
+    </Dialog>
   );
 }

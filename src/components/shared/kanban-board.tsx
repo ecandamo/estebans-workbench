@@ -174,6 +174,16 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
       {openCard && (
         <CardDrawer
           card={openCard}
+          stages={currentWorkspace.stages.map((s) => ({ id: s.id, name: s.name }))}
+          onMoveToStage={
+            readOnly
+              ? undefined
+              : (stageId) => {
+                  if (stageId !== openCard.stageId) {
+                    moveCard(openCard.id, openCard.stageId, stageId);
+                  }
+                }
+          }
           readOnly={readOnly}
           onUpdate={updateCard}
           onClose={() => setOpenCardId(null)}

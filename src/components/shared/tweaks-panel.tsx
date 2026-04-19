@@ -30,18 +30,27 @@ export function TweaksPanel({ onClose }: Props) {
   return (
     <div className="absolute top-12 right-0 z-30 w-56 bg-card border border-border rounded-lg shadow-lg p-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Accent color</p>
-        <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
-          <X size={12} />
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Accent color
+        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Close accent panel"
+        >
+          <X size={12} aria-hidden />
         </button>
       </div>
-      <div className="grid grid-cols-6 gap-2">
+      <div className="grid grid-cols-4 gap-2">
         {ACCENTS.map((a) => (
           <button
             key={a.label}
+            type="button"
             title={a.label}
+            aria-label={`Use ${a.label} accent`}
             onClick={() => applyAccent(a.value, a.fg)}
-            className="w-7 h-7 rounded-full border-2 border-transparent hover:border-foreground/30 transition-all hover:scale-110"
+            className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border-2 border-transparent transition-[border-color,transform] motion-safe:hover:scale-105 motion-reduce:hover:scale-100 hover:border-foreground/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             style={{ backgroundColor: a.value }}
           />
         ))}

@@ -63,6 +63,11 @@
 
 /* ─── Light Theme ─── */
 :root {
+  /* System stack when no loaded mono — avoids empty --font-mono */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --font-heading: var(--font-sans);
+  --font-serif: var(--font-sans);
+
   /* Surface */
   --background: oklch(0.985 0.002 250);
   --foreground: oklch(0.145 0.03 256);

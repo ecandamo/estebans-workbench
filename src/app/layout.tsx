@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Instrument_Serif, Inter, Roboto } from "next/font/google";
+import { Roboto, Source_Sans_3 } from "next/font/google";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
 
-const inter = Inter({
+const sourceSans = Source_Sans_3({
   variable: "--font-sans",
-  subsets: ["latin"],
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-mono",
   subsets: ["latin"],
 });
 
@@ -38,9 +28,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${instrumentSerif.variable} ${geistMono.variable} ${roboto.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${sourceSans.variable} ${roboto.variable} h-full antialiased`}
     >
-      <body className="h-full overflow-hidden">{children}</body>
+      <body className="h-full overflow-hidden">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
