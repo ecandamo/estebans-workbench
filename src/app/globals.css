@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* UI styling: prefer @theme / @utility tokens in this file over arbitrary `text-[…rem]`, `h-[…px]`, etc. */
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -72,6 +74,9 @@
   --font-serif: ui-serif, Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   --font-heading: var(--font-serif);
+
+  /* Layout — card drawer column select, etc. */
+  --max-stage-select: 12.5rem;
 
   /* Surface */
   --background: oklch(0.985 0.002 250);
@@ -216,14 +221,48 @@
   }
 }
 
+/*
+ * Typography micro-scale (dense UI). Prefer these over arbitrary text-[…rem].
+ * Smallest → larger: text-chip < text-label < text-meta < text-xs
+ */
+
+/* Dense priority chips on tiles + due dates — smaller than text-label. */
+@utility text-chip {
+  font-size: 0.5625rem;
+  line-height: 1rem;
+}
+
 /* Micro labels (section caps) — one step below text-xs, on-scale instead of arbitrary px. */
 @utility text-label {
   font-size: 0.625rem;
   line-height: 1rem;
 }
 
-/* Secondary meta line (due dates, chips, tertiary actions) — between label and text-xs. */
+/* Secondary meta line — between text-label and text-xs. */
 @utility text-meta {
   font-size: 0.6875rem;
   line-height: 1rem;
+}
+
+/* Priority chip alignment vs title line on compact card tiles */
+@utility mt-priority-chip {
+  margin-top: 3px;
+}
+
+@utility rounded-chip {
+  border-radius: 2px;
+}
+
+/* Checklist / card checklist progress bar track */
+@utility h-progress-track {
+  height: 3px;
+}
+
+@utility max-w-stage-select {
+  max-width: var(--max-stage-select);
+}
+
+/* Dialog overlay — single backdrop strength token */
+@utility backdrop-overlay {
+  backdrop-filter: blur(2px);
 }

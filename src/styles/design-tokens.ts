@@ -8,15 +8,14 @@
  * When updating the design system, edit globals.css directly.
  * Keep this file in sync manually as a human-readable reference.
  *
- * Design Tokens — Travel/Hospitality SaaS Dashboard
+ * App chrome (see src/app/layout.tsx + src/app/globals.css): Source Sans 3 (body),
+ * Source Serif 4 (display / headings), Source Code Pro (--font-mono), JetBrains Mono
+ * (wordmark via --font-wordmark / font-wordmark).
  *
- * Deep navy primary for executive trust, ocean teal secondary for
- * travel association, warm amber accent for hospitality warmth.
+ * Micro type scale in globals.css (@utility): text-chip → text-label → text-meta → text-xs.
  *
- * Typography: Plus Jakarta Sans (headings) + Inter (body)
- * Style: Clean minimalism with subtle navy-tinted elevation
- *
- * All accent/warning colors are WCAG AA 3:1 compliant against white.
+ * Legacy export below (Travel/Hospitality hex palette) predates the current oklch theme in
+ * globals.css; use globals as the source of truth for production UI colors.
  */
 
 export const designTokens = {
@@ -120,16 +119,19 @@ export const designTokens = {
   },
 
   fonts: {
+    /** Legacy reference; live heading font: Source Serif 4 (see layout.tsx). */
     heading: {
       family: "'Plus Jakarta Sans', sans-serif",
       weights: { medium: 500, semibold: 600, bold: 700 },
       letterSpacing: '-0.025em',
     },
+    /** Legacy reference; live body font: Source Sans 3 (see layout.tsx). */
     body: {
       family: "'Inter', sans-serif",
       weights: { light: 300, regular: 400, medium: 500, semibold: 600 },
       letterSpacing: '0em',
     },
+    /** JetBrains Mono matches wordmark; UI mono defaults to Source Code Pro in layout. */
     mono: {
       family: "'JetBrains Mono', monospace",
       weights: { regular: 400, medium: 500 },
@@ -138,6 +140,7 @@ export const designTokens = {
   },
 
   typography: {
+    /** Dense chips: use globals `text-chip` (0.5625rem), not duplicated here. */
     xs: { size: '0.75rem', lineHeight: '1rem' },
     sm: { size: '0.875rem', lineHeight: '1.25rem' },
     base: { size: '1rem', lineHeight: '1.5rem' },

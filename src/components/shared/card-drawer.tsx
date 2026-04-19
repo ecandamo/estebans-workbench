@@ -95,7 +95,7 @@ export function CardDrawer({
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <Portal>
-        <Overlay className="fixed inset-0 z-40 bg-background/70 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <Overlay className="fixed inset-0 z-40 bg-background/70 backdrop-overlay data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Content
           className={cn(
             "fixed top-0 right-0 z-50 flex h-full w-[min(100vw,420px)] flex-col overflow-hidden border-l border-border bg-card shadow-xl outline-none",
@@ -156,7 +156,7 @@ export function CardDrawer({
                     disabled={readOnly}
                     onClick={() => patch({ priority: p })}
                     className={cn(
-                      "rounded-sm border px-1.5 py-0.5 text-[0.5625rem] font-medium uppercase tracking-normal leading-none transition-[background-color,border-color,color]",
+                      "rounded-sm border px-1.5 py-0.5 text-chip font-medium uppercase tracking-normal leading-none transition-[background-color,border-color,color]",
                       local.priority === p
                         ? priorityChipClass[p]
                         : "border-transparent text-muted-foreground hover:bg-muted"
@@ -181,7 +181,7 @@ export function CardDrawer({
                 ) : (
                   <select
                     id={`card-stage-${local.id}`}
-                    className="max-w-[200px] rounded border border-border bg-background px-2 py-1 text-xs text-foreground outline-none transition-[border-color] focus:border-accent"
+                    className="max-w-stage-select rounded border border-border bg-background px-2 py-1 text-xs text-foreground outline-none transition-[border-color] focus:border-accent"
                     value={local.stageId}
                     onChange={(e) => {
                       const next = e.target.value;
@@ -236,7 +236,7 @@ export function CardDrawer({
               </div>
 
               {total > 0 && (
-                <div className="mb-3 h-[3px] overflow-hidden rounded-full bg-muted">
+                <div className="mb-3 h-progress-track overflow-hidden rounded-full bg-muted">
                   <div
                     className="h-full rounded-full bg-accent transition-[width] duration-200 motion-reduce:transition-none"
                     style={{ width: `${pct}%` }}
@@ -258,7 +258,7 @@ export function CardDrawer({
                     {readOnly ? (
                       <span
                         className={cn(
-                          "flex-1 text-sm",
+                          "flex-1 font-wordmark text-sm",
                           item.done && "text-muted-foreground line-through"
                         )}
                       >
@@ -267,7 +267,7 @@ export function CardDrawer({
                     ) : (
                       <input
                         className={cn(
-                          "min-w-0 flex-1 border-b border-transparent bg-transparent text-sm outline-none transition-[border-color] focus:border-border",
+                          "min-w-0 flex-1 border-b border-transparent bg-transparent font-wordmark text-sm outline-none transition-[border-color] focus:border-border",
                           item.done && "text-muted-foreground line-through"
                         )}
                         aria-label="Checklist item text"

@@ -83,7 +83,7 @@ export function KanbanCardTile({
       <div className="flex items-start gap-2">
         <span
           className={cn(
-            "mt-[3px] shrink-0 text-[0.5625rem] leading-none font-normal uppercase tracking-normal px-0.5 py-px rounded-[2px]",
+            "mt-priority-chip shrink-0 text-chip font-normal uppercase tracking-normal px-0.5 py-px leading-none rounded-chip",
             priorityChipClass[card.priority as Priority]
           )}
           aria-label={`Priority: ${priorityLabelCompact[card.priority as Priority]}`}
@@ -95,7 +95,7 @@ export function KanbanCardTile({
 
       {total > 0 && (
         <div className="mt-2.5 flex items-center gap-2">
-          <div className="flex-1 h-[3px] rounded-full bg-muted overflow-hidden">
+          <div className="flex-1 h-progress-track rounded-full bg-muted overflow-hidden">
             <div
               className="h-full bg-accent rounded-full transition-[width] duration-200 motion-reduce:transition-none"
               style={{ width: `${pct}%` }}
@@ -110,7 +110,7 @@ export function KanbanCardTile({
       {card.dueDate && (
         <p
           className={cn(
-            "mt-2 text-label leading-tight tabular-nums",
+            "mt-2 text-chip leading-tight tabular-nums",
             overdue ? "text-destructive font-medium" : "text-muted-foreground"
           )}
         >
