@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { generateId } from "@/lib/kanban-data";
 import { KanbanCardTile } from "./kanban-card";
 import { CardDrawer } from "./card-drawer";
-import type { BoardState, KanbanCard, Stage } from "@/types/kanban";
+import type { BoardState, KanbanCard, Stage, Workspace } from "@/types/kanban";
 
 type Props = {
   board: BoardState;
@@ -19,7 +19,17 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
   const [dropTargetId, setDropTargetId] = useState<string | null>(null);
   const dragCard = useRef<{ cardId: string; fromStageId: string } | null>(null);
 
-  const workspace = board.workspaces.find((w) => w.id === board.activeWorkspaceId)!;
+  const activeWsId = board.activeWorkspaceId;
+  if (activeWsId == null) {
+    return null;
+  }
+  const foundWorkspace = board.workspaces.find((w) => w.id === activeWsId);
+  if (!foundWorkspace) {
+    return null;
+  }
+  const currentWorkspace: Workspace = foundWorkspace;
+
+  const workspaceId: string = activeWsId;
 
   function updateBoard(partial: Partial<BoardState>) {
     onBoardChange({ ...board, ...partial });
@@ -32,7 +42,7 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
   function addCard(stageId: string) {
     const id = generateId();
     const card: KanbanCard = {
-      id, workspaceId: board.activeWorkspaceId, stageId,
+      id, workspaceId, stageId,
       title: "New card",
       description: "",
       priority: "medium",
@@ -42,7 +52,7 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
       activity: [{ id: generateId(), text: "Card created", timestamp: new Date().toISOString() }],
     };
     const updatedWorkspaces = board.workspaces.map((ws) =>
-      ws.id !== board.activeWorkspaceId ? ws : {
+      ws.id !== workspaceId ? ws : {
         ...ws,
         stages: ws.stages.map((s) =>
           s.id !== stageId ? s : { ...s, cardIds: [...s.cardIds, id] }
@@ -59,7 +69,7 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
 
   function deleteCard(cardId: string) {
     const updatedWorkspaces = board.workspaces.map((ws) =>
-      ws.id !== board.activeWorkspaceId
+      ws.id !== workspaceId
         ? ws
         : {
             ...ws,
@@ -83,7 +93,7 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
     if (fromStageId === toStageId) return;
 
     const card = board.cards[cardId];
-    const stageName = workspace.stages.find((s) => s.id === toStageId)?.name ?? toStageId;
+    const stageName = currentWorkspace.stages.find((s) => s.id === toStageId)?.name ?? toStageId;
     const updatedCard: KanbanCard = {
       ...card,
       stageId: toStageId,
@@ -94,7 +104,7 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
     };
 
     const updatedWorkspaces = board.workspaces.map((ws) =>
-      ws.id !== board.activeWorkspaceId ? ws : {
+      ws.id !== workspaceId ? ws : {
         ...ws,
         stages: ws.stages.map((s) => {
           if (s.id === fromStageId) return { ...s, cardIds: s.cardIds.filter((id) => id !== cardId) };
@@ -142,7 +152,7 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
       {/* Board scroll area */}
       <div className="flex-1 overflow-x-auto overflow-y-hidden">
         <div className="flex h-full gap-3 px-5 py-4" style={{ minWidth: "max-content" }}>
-          {workspace.stages.map((stage) => (
+          {currentWorkspace.stages.map((stage) => (
             <StageColumn
               key={stage.id}
               stage={stage}

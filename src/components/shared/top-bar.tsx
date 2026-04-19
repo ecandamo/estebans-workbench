@@ -8,9 +8,17 @@ type Props = {
   readOnly: boolean;
   showTweaks: boolean;
   onToggleTweaks: () => void;
+  /** When false, Share / Tweaks are hidden (no active workspace). */
+  showActions?: boolean;
 };
 
-export function TopBar({ workspaceName, readOnly, showTweaks, onToggleTweaks }: Props) {
+export function TopBar({
+  workspaceName,
+  readOnly,
+  showTweaks,
+  onToggleTweaks,
+  showActions = true,
+}: Props) {
   const [copied, setCopied] = useState(false);
 
   function handleShare() {
@@ -23,14 +31,18 @@ export function TopBar({ workspaceName, readOnly, showTweaks, onToggleTweaks }: 
 
   return (
     <header className="flex items-center h-12 px-5 border-b border-border shrink-0 bg-background gap-4">
-      <h1 className="text-sm font-semibold text-foreground">{workspaceName}</h1>
+      <h1
+        className={`text-sm font-semibold ${workspaceName ? "text-foreground" : "text-muted-foreground"}`}
+      >
+        {workspaceName || "No workspace"}
+      </h1>
 
       <div className="ml-auto flex items-center gap-2">
         {copied && (
           <span className="text-xs text-muted-foreground">Link copied!</span>
         )}
 
-        {!readOnly && (
+        {!readOnly && showActions && (
           <>
             <button
               onClick={handleShare}

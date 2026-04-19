@@ -1,14 +1,25 @@
 import type { BoardState, Workspace } from "@/types/kanban";
 
-const NEW_WORKSPACE_STAGE_NAMES = ["Intake", "Spec", "Build", "Test", "Live"] as const;
+/** Default column names when opening the “new workspace” form (editable before create). */
+export const DEFAULT_NEW_WORKSPACE_STAGE_NAMES = [
+  "Intake",
+  "Spec",
+  "Build",
+  "Test",
+  "Live",
+] as const;
 
-/** Creates a workspace with empty columns (no cards). */
-export function createEmptyWorkspace(name: string): Workspace {
+/** Creates a workspace with empty columns (no cards). `stageNames` must be non-empty after trimming. */
+export function createEmptyWorkspace(name: string, stageNames: string[]): Workspace {
+  const names = stageNames.map((s) => s.trim()).filter(Boolean);
+  if (names.length === 0) {
+    throw new Error("createEmptyWorkspace: at least one stage name is required");
+  }
   const wsId = `ws-${generateId()}`;
   return {
     id: wsId,
     name,
-    stages: NEW_WORKSPACE_STAGE_NAMES.map((stageName) => ({
+    stages: names.map((stageName) => ({
       id: `st-${generateId()}`,
       name: stageName,
       cardIds: [],
@@ -318,12 +329,36 @@ export const DEFAULT_BOARD_STATE: BoardState = {
 
 const STORAGE_KEY = "estebans-workbench-board";
 
+/** Ensures active workspace points at a real row when possible; drops orphan cards; allows empty board. */
+export function normalizeBoardState(state: BoardState): BoardState {
+  const workspaces = state.workspaces ?? [];
+  const wsIds = new Set(workspaces.map((w) => w.id));
+  const cards: BoardState["cards"] = {};
+  for (const [id, card] of Object.entries(state.cards ?? {})) {
+    if (wsIds.has(card.workspaceId)) {
+      cards[id] = card;
+    }
+  }
+
+  if (workspaces.length === 0) {
+    return { workspaces: [], cards: {}, activeWorkspaceId: null };
+  }
+
+  let activeWorkspaceId: string | null = state.activeWorkspaceId ?? null;
+  if (!activeWorkspaceId || !wsIds.has(activeWorkspaceId)) {
+    activeWorkspaceId = workspaces[0].id;
+  }
+
+  return { workspaces, cards, activeWorkspaceId };
+}
+
 export function loadBoard(): BoardState {
   if (typeof window === "undefined") return DEFAULT_BOARD_STATE;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_BOARD_STATE;
-    return JSON.parse(raw) as BoardState;
+    const parsed = JSON.parse(raw) as BoardState;
+    return normalizeBoardState(parsed);
   } catch {
     return DEFAULT_BOARD_STATE;
   }

@@ -40,5 +40,6 @@ export type Workspace = {
 export type BoardState = {
   workspaces: Workspace[];
   cards: Record<string, KanbanCard>;
-  activeWorkspaceId: string;
+  /** `null` when there are no workspaces or none selected. */
+  activeWorkspaceId: string | null;
 };
