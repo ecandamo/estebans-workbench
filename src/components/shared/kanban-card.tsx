@@ -19,9 +19,17 @@ type Props = {
   readOnly: boolean;
   onClick: () => void;
   onDragStart: (e: React.DragEvent) => void;
+  /** Alt+ArrowLeft / Alt+ArrowRight moves the card between columns (when not read-only). */
+  onKeyboardColumnMove?: (delta: -1 | 1) => void;
 };
 
-export function KanbanCardTile({ card, readOnly, onClick, onDragStart }: Props) {
+export function KanbanCardTile({
+  card,
+  readOnly,
+  onClick,
+  onDragStart,
+  onKeyboardColumnMove,
+}: Props) {
   const skipOpenAfterDrag = useRef(false);
   const done = card.checklist.filter((i) => i.done).length;
   const total = card.checklist.length;
@@ -45,6 +53,18 @@ export function KanbanCardTile({ card, readOnly, onClick, onDragStart }: Props) 
     onClick();
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
+    if (readOnly || !onKeyboardColumnMove) return;
+    if (!e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      onKeyboardColumnMove(-1);
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      onKeyboardColumnMove(1);
+    }
+  }
+
   return (
     <button
       type="button"
@@ -52,6 +72,7 @@ export function KanbanCardTile({ card, readOnly, onClick, onDragStart }: Props) 
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       className={cn(
         "group w-full text-left bg-card border border-border rounded-lg p-3 cursor-pointer select-none",
         "hover:shadow-[var(--shadow-card-hover)] hover:border-border/80 transition-[box-shadow,border-color,opacity] duration-150",
@@ -75,7 +96,7 @@ export function KanbanCardTile({ card, readOnly, onClick, onDragStart }: Props) 
         <div className="mt-2.5 flex items-center gap-2">
           <div className="flex-1 h-[3px] rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full bg-accent rounded-full transition-[width] duration-200"
+              className="h-full bg-accent rounded-full transition-[width] duration-200 motion-reduce:transition-none"
               style={{ width: `${pct}%` }}
             />
           </div>

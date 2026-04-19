@@ -145,6 +145,18 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
     setDropTargetId(null);
   }
 
+  function handleCardKeyboardMove(
+    cardId: string,
+    fromStageId: string,
+    delta: -1 | 1
+  ) {
+    const stages = currentWorkspace.stages;
+    const idx = stages.findIndex((s) => s.id === fromStageId);
+    const nextIdx = idx + delta;
+    if (nextIdx < 0 || nextIdx >= stages.length) return;
+    moveCard(cardId, fromStageId, stages[nextIdx].id);
+  }
+
   const openCard = openCardId ? board.cards[openCardId] : null;
 
   return (
@@ -165,6 +177,9 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
               onDrop={(e) => handleDrop(e, stage.id)}
               onDragLeave={handleDragLeave}
               onAddCard={() => addCard(stage.id)}
+              onCardKeyboardMove={(cardId, delta) =>
+                handleCardKeyboardMove(cardId, stage.id, delta)
+              }
             />
           ))}
         </div>
@@ -205,11 +220,13 @@ type ColumnProps = {
   onDrop: (e: React.DragEvent) => void;
   onDragLeave: () => void;
   onAddCard: () => void;
+  onCardKeyboardMove: (cardId: string, delta: -1 | 1) => void;
 };
 
 function StageColumn({
   stage, cards, readOnly, isDropTarget,
   onCardClick, onDragStart, onDragOver, onDrop, onDragLeave, onAddCard,
+  onCardKeyboardMove,
 }: ColumnProps) {
   return (
     <div className="flex flex-col w-64 shrink-0 h-full">
@@ -239,12 +256,16 @@ function StageColumn({
               readOnly={readOnly}
               onClick={() => onCardClick(card.id)}
               onDragStart={(e) => onDragStart(e, card.id, stage.id)}
+              onKeyboardColumnMove={
+                readOnly ? undefined : (delta) => onCardKeyboardMove(card.id, delta)
+              }
             />
           ))}
 
           {/* Add card button */}
           {!readOnly && (
             <button
+              type="button"
               onClick={onAddCard}
               className="w-full flex items-center gap-1.5 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             >

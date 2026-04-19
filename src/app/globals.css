@@ -56,9 +56,11 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
 
-  /* Dashboard-specific shadows */
-  --shadow-card: 0 1px 3px 0 rgb(30 58 138 / 0.04), 0 1px 2px -1px rgb(30 58 138 / 0.03);
-  --shadow-card-hover: 0 4px 12px -2px rgb(30 58 138 / 0.08), 0 2px 4px -2px rgb(30 58 138 / 0.04);
+  /* Dashboard-specific shadows — tint follows --primary */
+  --shadow-card: 0 1px 3px 0 color-mix(in oklch, var(--primary) 7%, transparent),
+    0 1px 2px -1px color-mix(in oklch, var(--primary) 5%, transparent);
+  --shadow-card-hover: 0 4px 12px -2px color-mix(in oklch, var(--primary) 10%, transparent),
+    0 2px 4px -2px color-mix(in oklch, var(--primary) 6%, transparent);
 }
 
 /* ─── Light Theme ─── */
@@ -71,7 +73,7 @@
   /* Surface */
   --background: oklch(0.985 0.002 250);
   --foreground: oklch(0.145 0.03 256);
-  --card: oklch(1 0 0);
+  --card: oklch(0.995 0.003 250);
   --card-foreground: oklch(0.21 0.025 256);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.21 0.025 256);

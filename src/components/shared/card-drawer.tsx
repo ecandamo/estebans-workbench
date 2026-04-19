@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import {
   Close,
   Content,
@@ -48,6 +48,7 @@ export function CardDrawer({
 }: Props) {
   const [local, setLocal] = useState<KanbanCard>(card);
   const [comment, setComment] = useState("");
+  const commentFieldId = useId();
 
   useEffect(() => {
     setLocal(card);
@@ -237,7 +238,7 @@ export function CardDrawer({
               {total > 0 && (
                 <div className="mb-3 h-[3px] overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full rounded-full bg-accent transition-[width] duration-200"
+                    className="h-full rounded-full bg-accent transition-[width] duration-200 motion-reduce:transition-none"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -308,11 +309,15 @@ export function CardDrawer({
 
             {!readOnly && (
               <div>
-                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                <label
+                  htmlFor={commentFieldId}
+                  className="mb-1.5 block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground"
+                >
                   Add comment
-                </p>
+                </label>
                 <div className="flex flex-wrap gap-2">
                   <input
+                    id={commentFieldId}
                     className="min-h-11 min-w-0 flex-1 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm outline-none transition-[border-color] focus:border-accent"
                     placeholder="Leave a note..."
                     value={comment}

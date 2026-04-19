@@ -117,7 +117,12 @@ function BoardApp() {
 
   if (sessionLoading || !session || !board) {
     return (
-      <div className="flex h-full items-center justify-center">
+      <div
+        role="status"
+        aria-live="polite"
+        aria-busy
+        className="flex h-full items-center justify-center"
+      >
         <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
@@ -138,7 +143,7 @@ function BoardApp() {
         readOnly={false}
       />
 
-      <div className="flex flex-col flex-1 overflow-hidden relative">
+      <main className="flex flex-col flex-1 overflow-hidden relative">
         <TopBar
           workspaceName={activeWorkspace?.name ?? ""}
           readOnly={false}
@@ -170,7 +175,7 @@ function BoardApp() {
             </p>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
@@ -179,7 +184,12 @@ export default function Home() {
   return (
     <Suspense
       fallback={
-        <div className="flex h-full items-center justify-center">
+        <div
+          role="status"
+          aria-live="polite"
+          aria-busy
+          className="flex h-full items-center justify-center"
+        >
           <span className="text-sm text-muted-foreground">Loading…</span>
         </div>
       }

@@ -29,16 +29,23 @@ export default function SharePage() {
 
   if (error) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2">
-        <p className="text-sm font-medium text-foreground">Link unavailable</p>
-        <p className="text-xs text-muted-foreground max-w-sm text-center">{error}</p>
-      </div>
+      <main className="flex h-full flex-col items-center justify-center gap-2 px-4">
+        <div role="alert" className="flex flex-col items-center gap-2 text-center">
+          <p className="text-sm font-medium text-foreground">Link unavailable</p>
+          <p className="text-xs text-muted-foreground max-w-sm">{error}</p>
+        </div>
+      </main>
     );
   }
 
   if (!board) {
     return (
-      <div className="flex h-full items-center justify-center">
+      <div
+        role="status"
+        aria-live="polite"
+        aria-busy
+        className="flex h-full items-center justify-center"
+      >
         <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
@@ -57,7 +64,7 @@ export default function SharePage() {
         readOnly
       />
 
-      <div className="flex flex-col flex-1 overflow-hidden relative">
+      <main className="flex flex-col flex-1 overflow-hidden relative">
         <TopBar
           workspaceName={activeWorkspace?.name ?? ""}
           readOnly
@@ -80,7 +87,7 @@ export default function SharePage() {
             </p>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

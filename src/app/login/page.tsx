@@ -41,8 +41,10 @@ export default function LoginPage() {
     }
   }
 
+  const fieldErrorDesc = error ? "login-form-error" : undefined;
+
   return (
-    <div className="flex h-full items-center justify-center bg-background">
+    <main className="flex h-full items-center justify-center bg-background">
       <div className="w-full max-w-sm space-y-6 px-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -53,7 +55,11 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-3"
+          aria-busy={loading}
+        >
           {mode === "signup" && (
             <div className="space-y-1.5">
               <label htmlFor="name" className="text-xs font-medium text-foreground">
@@ -67,7 +73,9 @@ export default function LoginPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Esteban"
-                className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/20"
+                aria-invalid={!!error}
+                aria-describedby={fieldErrorDesc}
+                className="min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/20"
               />
             </div>
           )}
@@ -84,7 +92,9 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/20"
+              aria-invalid={!!error}
+              aria-describedby={fieldErrorDesc}
+              className="min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/20"
             />
           </div>
 
@@ -100,18 +110,23 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/20"
+              aria-invalid={!!error}
+              aria-describedby={fieldErrorDesc}
+              className="min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/20"
             />
           </div>
 
           {error && (
-            <p className="text-xs text-destructive">{error}</p>
+            <p id="login-form-error" role="alert" className="text-xs text-destructive">
+              {error}
+            </p>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="h-9 w-full rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+            aria-busy={loading}
+            className="min-h-11 w-full rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
             {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
           </button>
@@ -122,12 +137,12 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setError(null); }}
-            className="font-medium text-foreground underline-offset-2 hover:underline"
+            className="min-h-11 min-w-[44px] font-medium text-foreground underline-offset-2 hover:underline"
           >
             {mode === "signin" ? "Sign up" : "Sign in"}
           </button>
         </p>
       </div>
-    </div>
+    </main>
   );
 }

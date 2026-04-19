@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useId } from "react";
+import { useState, useId } from "react";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { DEFAULT_NEW_WORKSPACE_STAGE_NAMES } from "@/lib/kanban-data";
 import { cn } from "@/lib/utils";
@@ -55,14 +56,9 @@ export function WorkspaceSidebar({
     setStageInputs((rows) => [...rows, ""]);
   }
 
-  useEffect(() => {
-    if (pendingDeleteId == null) return;
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setPendingDeleteId(null);
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [pendingDeleteId]);
+  const pendingWs = pendingDeleteId
+    ? workspaces.find((w) => w.id === pendingDeleteId)
+    : undefined;
 
   return (
     <aside className="flex flex-col w-52 shrink-0 h-full border-r border-border bg-background">
@@ -84,68 +80,78 @@ export function WorkspaceSidebar({
         </p>
         {workspaces.map((ws) => (
           <div key={ws.id} className="mb-1 last:mb-0">
-            {pendingDeleteId === ws.id ? (
-              <div
-                className="rounded-md border border-border bg-muted/40 px-2.5 py-2 space-y-2"
-                role="alertdialog"
-                aria-labelledby={`delete-workspace-title-${ws.id}`}
+            <div className="group flex items-stretch gap-0.5 rounded-md">
+              <button
+                type="button"
+                onClick={() => onSelect(ws.id)}
+                className={cn(
+                  "min-w-0 flex-1 text-left px-3 py-2 rounded-md text-sm transition-colors",
+                  ws.id === activeId
+                    ? "bg-accent/15 text-foreground font-medium"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
               >
-                <p id={`delete-workspace-title-${ws.id}`} className="text-[11px] text-foreground leading-snug">
-                  Delete <span className="font-medium">{ws.name}</span>? All cards in this workspace will be
-                  removed.
-                </p>
-                <div className="flex gap-2 justify-end">
-                  <button
-                    type="button"
-                    className="text-xs px-2 py-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
-                    onClick={() => setPendingDeleteId(null)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="text-xs px-2 py-1 rounded-md font-medium bg-destructive/15 text-destructive hover:bg-destructive/25"
-                    onClick={() => {
-                      onDeleteWorkspace?.(ws.id);
-                      setPendingDeleteId(null);
-                    }}
-                  >
-                    Delete workspace
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="group flex items-stretch gap-0.5 rounded-md">
+                <span className="block truncate">{ws.name}</span>
+              </button>
+              {!readOnly && onDeleteWorkspace && (
                 <button
                   type="button"
-                  onClick={() => onSelect(ws.id)}
-                  className={cn(
-                    "min-w-0 flex-1 text-left px-3 py-2 rounded-md text-sm transition-colors",
-                    ws.id === activeId
-                      ? "bg-accent/15 text-foreground font-medium"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
+                  aria-label={`Delete workspace ${ws.name}`}
+                  className="shrink-0 px-1.5 rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPendingDeleteId(ws.id);
+                  }}
                 >
-                  <span className="block truncate">{ws.name}</span>
+                  <Trash2 size={14} strokeWidth={2} />
                 </button>
-                {!readOnly && onDeleteWorkspace && (
-                  <button
-                    type="button"
-                    aria-label={`Delete workspace ${ws.name}`}
-                    className="shrink-0 px-1.5 rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPendingDeleteId(ws.id);
-                    }}
-                  >
-                    <Trash2 size={14} strokeWidth={2} />
-                  </button>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
         ))}
       </nav>
+
+      <AlertDialog.Root
+        open={pendingDeleteId !== null && pendingWs != null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDeleteId(null);
+        }}
+      >
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay className="fixed inset-0 z-[100] bg-background/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <AlertDialog.Content className="fixed left-1/2 top-1/2 z-[101] w-[min(calc(100vw-2rem),22rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-card p-5 shadow-lg outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+            <AlertDialog.Title className="text-sm font-medium text-foreground">
+              Delete {pendingWs?.name}?
+            </AlertDialog.Title>
+            <AlertDialog.Description className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              All cards in this workspace will be removed. This cannot be undone.
+            </AlertDialog.Description>
+            <div className="mt-5 flex justify-end gap-2">
+              <AlertDialog.Cancel asChild>
+                <button
+                  type="button"
+                  className="text-xs px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
+                >
+                  Cancel
+                </button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action asChild>
+                <button
+                  type="button"
+                  className="text-xs px-3 py-2 rounded-md font-medium bg-destructive/15 text-destructive hover:bg-destructive/25"
+                  onClick={() => {
+                    if (pendingDeleteId && onDeleteWorkspace) {
+                      onDeleteWorkspace(pendingDeleteId);
+                    }
+                  }}
+                >
+                  Delete workspace
+                </button>
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
 
       {/* Footer */}
       {!readOnly && onAddWorkspace && (
