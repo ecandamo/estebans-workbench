@@ -14,6 +14,7 @@ import { useSession } from "@/lib/auth-client";
 import { WorkspaceSidebar } from "@/components/shared/workspace-sidebar";
 import { KanbanBoard } from "@/components/shared/kanban-board";
 import { TopBar } from "@/components/shared/top-bar";
+import { WorkbenchWordmark } from "@/components/shared/workbench-wordmark";
 import type { SyncStatus } from "@/components/shared/top-bar";
 import { TweaksPanel } from "@/components/shared/tweaks-panel";
 import type { BoardState } from "@/types/kanban";
@@ -338,58 +339,61 @@ function BoardApp() {
     : undefined;
 
   return (
-    <div className="flex h-full overflow-hidden">
-      <WorkspaceSidebar
-        workspaces={board.workspaces}
-        activeId={board.activeWorkspaceId}
-        onSelect={handleWorkspaceSelect}
-        onAddWorkspace={handleAddWorkspace}
-        onDeleteWorkspace={handleDeleteWorkspace}
-        readOnly={false}
-      />
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="relative z-20 shrink-0">
+        <TopBar
+          leading={<WorkbenchWordmark />}
+          readOnly={false}
+          showTweaks={showTweaks}
+          onToggleTweaks={() => setShowTweaks((s) => !s)}
+          showActions={!!activeWorkspace}
+          syncStatus={syncStatus}
+          syncErrorMessage={syncErrorMessage}
+          onRetrySave={retrySave}
+          shareErrorMessage={shareErrorMessage}
+          onDismissShareError={() => setShareErrorMessage(null)}
+          shareToken={shareToken}
+          shareEnabled={shareEnabled}
+          onGenerateShare={handleGenerateShare}
+          onRevokeShare={handleRevokeShare}
+        />
 
-      <main className="flex flex-col flex-1 overflow-hidden relative">
-        <div className="relative z-20 shrink-0">
-          <TopBar
-            workspaceName={activeWorkspace?.name ?? ""}
-            readOnly={false}
-            showTweaks={showTweaks}
-            onToggleTweaks={() => setShowTweaks((s) => !s)}
-            showActions={!!activeWorkspace}
-            syncStatus={syncStatus}
-            syncErrorMessage={syncErrorMessage}
-            onRetrySave={retrySave}
-            shareErrorMessage={shareErrorMessage}
-            onDismissShareError={() => setShareErrorMessage(null)}
-            shareToken={shareToken}
-            shareEnabled={shareEnabled}
-            onGenerateShare={handleGenerateShare}
-            onRevokeShare={handleRevokeShare}
-          />
-
-          {showTweaks && activeWorkspace && (
-            <TweaksPanel onClose={() => setShowTweaks(false)} />
-          )}
-        </div>
-
-        {activeWorkspace ? (
-          <KanbanBoard
-            board={board}
-            readOnly={false}
-            onBoardChange={handleBoardChange}
-          />
-        ) : (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
-            <p className="font-serif text-base font-semibold text-foreground">
-              No workspace yet
-            </p>
-            <p className="text-xs text-muted-foreground max-w-sm">
-              Add one with{" "}
-              <span className="font-medium text-foreground">+ New workspace</span> in the sidebar.
-            </p>
-          </div>
+        {showTweaks && activeWorkspace && (
+          <TweaksPanel onClose={() => setShowTweaks(false)} />
         )}
-      </main>
+      </div>
+
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <WorkspaceSidebar
+          workspaces={board.workspaces}
+          activeId={board.activeWorkspaceId}
+          onSelect={handleWorkspaceSelect}
+          onAddWorkspace={handleAddWorkspace}
+          onDeleteWorkspace={handleDeleteWorkspace}
+          readOnly={false}
+        />
+
+        <main className="relative flex flex-1 flex-col overflow-hidden">
+          {activeWorkspace ? (
+            <KanbanBoard
+              board={board}
+              readOnly={false}
+              onBoardChange={handleBoardChange}
+            />
+          ) : (
+            <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
+              <p className="font-serif text-base font-semibold text-foreground">
+                No workspace yet
+              </p>
+              <p className="text-xs text-muted-foreground max-w-sm">
+                Add one with{" "}
+                <span className="font-medium text-foreground">+ New workspace</span> in the
+                sidebar.
+              </p>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

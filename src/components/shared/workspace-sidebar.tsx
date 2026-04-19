@@ -61,18 +61,10 @@ export function WorkspaceSidebar({
     : undefined;
 
   return (
-    <aside className="flex flex-col w-52 shrink-0 h-full border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
-      {/* Wordmark */}
-      <div className="flex min-h-12 shrink-0 items-center border-b border-sidebar-border bg-muted/35 px-4 sm:px-6">
-        <span className="font-serif text-[1.1rem] font-semibold leading-tight tracking-tight text-foreground whitespace-nowrap">
-          <span className="font-normal italic">Esteban&apos;s</span>
-          <span> Workbench</span>
-        </span>
-      </div>
-
+    <aside className="flex flex-col w-60 shrink-0 h-full border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
       {/* Workspace list */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <p className="mb-2 px-1 text-label font-semibold uppercase tracking-widest text-muted-foreground/90">
+      <nav className="flex-1 overflow-y-auto px-4 py-4 sm:px-6">
+        <p className="mb-2 text-label font-semibold uppercase tracking-widest text-muted-foreground/90">
           Workspaces
         </p>
         <div className="flex flex-col gap-1">
@@ -154,7 +146,7 @@ export function WorkspaceSidebar({
 
       {/* Footer */}
       {!readOnly && onAddWorkspace && (
-        <div className="space-y-2 border-t border-sidebar-border px-3 py-4 sm:px-4">
+        <div className="space-y-2 border-t border-sidebar-border px-4 py-4 sm:px-6">
           {adding ? (
             <div className="flex flex-col gap-2">
               <label htmlFor={`${newWorkspaceFormId}-name`} className="sr-only">

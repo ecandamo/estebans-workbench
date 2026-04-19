@@ -148,7 +148,7 @@ export function CardDrawer({
 
             {/* Column + priority row */}
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1">
                 {PRIORITIES.map((p) => (
                   <button
                     key={p}
@@ -156,7 +156,7 @@ export function CardDrawer({
                     disabled={readOnly}
                     onClick={() => patch({ priority: p })}
                     className={cn(
-                      "rounded border px-2 py-1 text-label font-semibold uppercase tracking-wide transition-[background-color,border-color,color]",
+                      "rounded-sm border px-1.5 py-0.5 text-[0.5625rem] font-medium uppercase tracking-normal leading-none transition-[background-color,border-color,color]",
                       local.priority === p
                         ? priorityChipClass[p]
                         : "border-transparent text-muted-foreground hover:bg-muted"

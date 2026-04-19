@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { WorkspaceSidebar } from "@/components/shared/workspace-sidebar";
 import { KanbanBoard } from "@/components/shared/kanban-board";
 import { TopBar } from "@/components/shared/top-bar";
+import { WorkbenchWordmark } from "@/components/shared/workbench-wordmark";
 import type { BoardState } from "@/types/kanban";
 
 const MSG_NETWORK =
@@ -13,6 +14,9 @@ const MSG_NETWORK =
 export default function SharePage() {
   const { token } = useParams<{ token: string }>();
   const [board, setBoard] = useState<BoardState | null>(null);
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -28,7 +32,10 @@ export default function SharePage() {
         return res.json();
       })
       .then((data) => {
-        if (data) setBoard(data.board);
+        if (data) {
+          setBoard(data.board);
+          setActiveWorkspaceId(data.board.activeWorkspaceId);
+        }
       })
       .catch(() => {
         setError(MSG_NETWORK);
@@ -61,45 +68,47 @@ export default function SharePage() {
     );
   }
 
-  const activeWorkspace = board.activeWorkspaceId
-    ? board.workspaces.find((w) => w.id === board.activeWorkspaceId)
+  const activeWorkspace = activeWorkspaceId
+    ? board.workspaces.find((w) => w.id === activeWorkspaceId)
     : undefined;
 
   return (
-    <div className="flex h-full overflow-hidden">
-      <WorkspaceSidebar
-        workspaces={board.workspaces}
-        activeId={board.activeWorkspaceId}
-        onSelect={() => {}}
+    <div className="flex h-full flex-col overflow-hidden">
+      <TopBar
+        leading={<WorkbenchWordmark />}
         readOnly
+        showTweaks={false}
+        onToggleTweaks={() => {}}
+        showActions={false}
       />
 
-      <main className="flex flex-col flex-1 overflow-hidden relative">
-        <TopBar
-          workspaceName={activeWorkspace?.name ?? ""}
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <WorkspaceSidebar
+          workspaces={board.workspaces}
+          activeId={activeWorkspaceId}
+          onSelect={setActiveWorkspaceId}
           readOnly
-          showTweaks={false}
-          onToggleTweaks={() => {}}
-          showActions={false}
         />
 
-        {activeWorkspace ? (
-          <KanbanBoard
-            board={board}
-            readOnly
-            onBoardChange={() => {}}
-          />
-        ) : (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
-            <p className="font-serif text-base font-semibold text-foreground">
-              Nothing here yet
-            </p>
-            <p className="text-xs text-muted-foreground max-w-sm">
-              This shared board doesn&apos;t include a workspace.
-            </p>
-          </div>
-        )}
-      </main>
+        <main className="flex flex-1 flex-col overflow-hidden">
+          {activeWorkspace ? (
+            <KanbanBoard
+              board={{ ...board, activeWorkspaceId }}
+              readOnly
+              onBoardChange={() => {}}
+            />
+          ) : (
+            <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
+              <p className="font-serif text-base font-semibold text-foreground">
+                Nothing here yet
+              </p>
+              <p className="text-xs text-muted-foreground max-w-sm">
+                This shared board doesn&apos;t include a workspace.
+              </p>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

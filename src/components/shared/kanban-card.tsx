@@ -77,13 +77,13 @@ export function KanbanCardTile({
         "group w-full text-left bg-card border border-border rounded-lg p-3 cursor-pointer select-none",
         "hover:shadow-[var(--shadow-card-hover)] hover:border-border/80 transition-[box-shadow,border-color,opacity] duration-150",
         !readOnly && "active:opacity-70",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-board"
       )}
     >
       <div className="flex items-start gap-2">
         <span
           className={cn(
-            "mt-px shrink-0 text-label font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded",
+            "mt-[3px] shrink-0 text-[0.5625rem] leading-none font-normal uppercase tracking-normal px-0.5 py-px rounded-[2px]",
             priorityChipClass[card.priority as Priority]
           )}
           aria-label={`Priority: ${priorityLabelCompact[card.priority as Priority]}`}
@@ -110,7 +110,7 @@ export function KanbanCardTile({
       {card.dueDate && (
         <p
           className={cn(
-            "mt-2 text-meta",
+            "mt-2 text-label leading-tight tabular-nums",
             overdue ? "text-destructive font-medium" : "text-muted-foreground"
           )}
         >

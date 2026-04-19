@@ -9,6 +9,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --font-wordmark: var(--font-wordmark);
   --font-heading: var(--font-serif);
   --font-serif: var(--font-serif);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -40,6 +41,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-board: var(--board);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -78,6 +80,8 @@
   --card-foreground: oklch(0.21 0.025 256);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.21 0.025 256);
+  /* Main Kanban canvas — cards/columns derive contrast from this */
+  --board: oklch(1 0 0);
 
   /* Brand: Deep Navy */
   --primary: oklch(0.34 0.12 262);
@@ -87,9 +91,9 @@
   --secondary: oklch(0.49 0.1 180);
   --secondary-foreground: oklch(1 0 0);
 
-  /* Neutral Muted */
-  --muted: oklch(0.965 0.003 250);
-  --muted-foreground: oklch(0.55 0.02 256);
+  /* Neutral Muted — neutral grays to match white board + sidebar chrome */
+  --muted: oklch(0.965 0 0);
+  --muted-foreground: oklch(0.48 0 0);
 
   /* Brand: Warm Amber */
   --accent: oklch(0.72 0.14 65);
@@ -99,8 +103,8 @@
   --destructive: oklch(0.577 0.245 27.325);
 
   /* Chrome */
-  --border: oklch(0.915 0.008 250);
-  --input: oklch(0.915 0.008 250);
+  --border: oklch(0.8421 0 0);
+  --input: oklch(0.8421 0 0);
   --ring: oklch(0.34 0.12 262);
 
   /* Charts — diverse, accessible palette */
@@ -113,14 +117,14 @@
   /* Radius base */
   --radius: 0.625rem;
 
-  /* Sidebar — slightly cooler than page bg for wayfinding */
-  --sidebar: oklch(0.972 0.008 256);
+  /* Sidebar — same surface as canvas */
+  --sidebar: oklch(0.985 0.002 250);
   --sidebar-foreground: oklch(0.145 0.03 256);
   --sidebar-primary: oklch(0.34 0.12 262);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.965 0.003 250);
+  --sidebar-accent: oklch(0.94 0 0);
   --sidebar-accent-foreground: oklch(0.21 0.025 256);
-  --sidebar-border: oklch(0.915 0.008 250);
+  --sidebar-border: oklch(0.8421 0 0);
   --sidebar-ring: oklch(0.34 0.12 262);
 
   /* Semantic status */
@@ -134,13 +138,14 @@
 
 /* ─── Dark Theme ─── */
 .dark {
-  /* Surface */
+  /* Surface — neutral ramp aligned to board (0.20) < columns < cards < sidebar chrome */
   --background: oklch(0.145 0.03 256);
-  --foreground: oklch(0.985 0.002 250);
-  --card: oklch(0.21 0.025 256);
-  --card-foreground: oklch(0.965 0.003 250);
-  --popover: oklch(0.21 0.025 256);
-  --popover-foreground: oklch(0.965 0.003 250);
+  --foreground: oklch(0.96 0.003 250);
+  --board: oklch(0.2002 0 0);
+  --card: oklch(0.29 0 0);
+  --card-foreground: oklch(0.96 0.003 250);
+  --popover: oklch(0.29 0 0);
+  --popover-foreground: oklch(0.96 0.003 250);
 
   /* Brand: Lighter Navy for dark surfaces */
   --primary: oklch(0.63 0.185 262);
@@ -150,9 +155,9 @@
   --secondary: oklch(0.7 0.1 180);
   --secondary-foreground: oklch(0.145 0.03 256);
 
-  /* Neutral Muted */
-  --muted: oklch(0.27 0.02 256);
-  --muted-foreground: oklch(0.68 0.02 256);
+  /* Neutral Muted — column strips / hovers on the board */
+  --muted: oklch(0.24 0 0);
+  --muted-foreground: oklch(0.72 0 0);
 
   /* Brand: Lighter Amber */
   --accent: oklch(0.75 0.15 75);
@@ -162,8 +167,8 @@
   --destructive: oklch(0.704 0.191 22.216);
 
   /* Chrome */
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(0.3791 0 0);
+  --input: oklch(0.3791 0 0);
   --ring: oklch(0.63 0.185 262);
 
   /* Charts — lighter tints for dark backgrounds */
@@ -174,13 +179,13 @@
   --chart-5: oklch(0.72 0.12 155);
 
   /* Sidebar — lifted from canvas for depth */
-  --sidebar: oklch(0.175 0.035 262);
-  --sidebar-foreground: oklch(0.985 0.002 250);
+  --sidebar: oklch(0.2686 0 0);
+  --sidebar-foreground: oklch(0.96 0.003 250);
   --sidebar-primary: oklch(0.63 0.185 262);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.27 0.02 256);
-  --sidebar-accent-foreground: oklch(0.965 0.003 250);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-accent: oklch(0.35 0 0);
+  --sidebar-accent-foreground: oklch(0.96 0.003 250);
+  --sidebar-border: oklch(0.3791 0 0);
   --sidebar-ring: oklch(0.63 0.185 262);
 
   /* Semantic status — desaturated for dark backgrounds */

@@ -160,11 +160,14 @@ export function KanbanBoard({ board, readOnly, onBoardChange }: Props) {
   const openCard = openCardId ? board.cards[openCardId] : null;
 
   return (
-    <div className="relative flex-1 flex overflow-hidden">
+    <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-board">
+      <h1 className="font-wordmark max-w-[min(100%,42ch)] shrink-0 truncate px-4 pb-2 pt-5 text-2xl font-semibold tracking-tight text-foreground sm:px-6">
+        {currentWorkspace.name}
+      </h1>
       {/* Board scroll area */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden">
+      <div className="min-h-0 flex-1 overflow-x-auto overflow-y-hidden">
         <div
-          className="flex h-full min-w-max gap-4 px-4 py-5 sm:px-6"
+          className="flex h-full min-w-max gap-4 px-4 pb-5 pt-1 sm:px-6"
         >
           {currentWorkspace.stages.map((stage) => (
             <StageColumn
@@ -237,7 +240,7 @@ function StageColumn({
         <span className="min-w-0 truncate text-xs font-semibold text-foreground">
           {stage.name}
         </span>
-        <span className="shrink-0 rounded-full bg-primary/12 px-2 py-0.5 text-center text-label font-medium tabular-nums text-primary">
+        <span className="shrink-0 rounded-full border border-border bg-muted/50 px-2 py-0.5 text-center text-label font-medium tabular-nums text-muted-foreground">
           {cards.length}
         </span>
       </div>
@@ -248,7 +251,7 @@ function StageColumn({
           "flex-1 rounded-xl border border-dashed transition-colors duration-150 overflow-y-auto",
           isDropTarget
             ? "border-accent/60 bg-accent/8"
-            : "border-primary/12 bg-muted/25"
+            : "border-border bg-muted/40"
         )}
         onDragOver={onDragOver}
         onDrop={onDrop}
@@ -273,7 +276,7 @@ function StageColumn({
             <button
               type="button"
               onClick={onAddCard}
-              className="flex min-h-10 w-full items-center gap-1.5 rounded-lg px-3 py-2 text-xs text-muted-foreground transition-colors duration-150 hover:bg-muted/80 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="flex min-h-10 w-full items-center gap-1.5 rounded-lg px-3 py-2 text-xs text-muted-foreground transition-colors duration-150 hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-board"
             >
               <Plus size={12} />
               Add card
