@@ -7,6 +7,7 @@ ARIA patterns, keyboard navigation, screen reader support, and accessible compon
 shadcn/ui built on Radix UI primitives - unstyled, accessible components following WAI-ARIA design patterns.
 
 Benefits:
+
 - Keyboard navigation built-in
 - Screen reader announcements
 - Focus management
@@ -18,6 +19,7 @@ Benefits:
 ### Focus Management
 
 **Focus visible states:**
+
 ```tsx
 <Button className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
   Accessible Button
@@ -25,6 +27,7 @@ Benefits:
 ```
 
 **Skip to content:**
+
 ```tsx
 <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2">
   Skip to content
@@ -54,6 +57,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 ```
 
 Features:
+
 - Focus trapped within dialog
 - Esc key closes
 - Tab cycles through focusable elements
@@ -75,6 +79,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 ```
 
 Keyboard shortcuts:
+
 - `Space/Enter`: Open menu
 - `Arrow Up/Down`: Navigate items
 - `Esc`: Close menu
@@ -97,6 +102,7 @@ import { Command } from "@/components/ui/command"
 ```
 
 Features:
+
 - Type to filter
 - Arrow keys to navigate
 - Enter to select
@@ -120,6 +126,7 @@ Use proper HTML elements:
 ### ARIA Labels
 
 **Label interactive elements:**
+
 ```tsx
 <Button aria-label="Close dialog">
   <X className="h-4 w-4" />
@@ -129,6 +136,7 @@ Use proper HTML elements:
 ```
 
 **Describe elements:**
+
 ```tsx
 <Button aria-describedby="delete-description">
   Delete Account
@@ -178,6 +186,7 @@ Announce dynamic content:
 ```
 
 Toast component includes live region:
+
 ```tsx
 const { toast } = useToast()
 
@@ -193,6 +202,7 @@ toast({
 ### Labels and Descriptions
 
 **Always label inputs:**
+
 ```tsx
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -204,6 +214,7 @@ import { Input } from "@/components/ui/input"
 ```
 
 **Add descriptions:**
+
 ```tsx
 import { FormDescription, FormMessage } from "@/components/ui/form"
 
@@ -361,10 +372,12 @@ import { Alert } from "@/components/ui/alert"
 Ensure sufficient contrast between text and background.
 
 **WCAG Requirements:**
+
 - **AA**: 4.5:1 for normal text, 3:1 for large text
 - **AAA**: 7:1 for normal text, 4.5:1 for large text
 
 **Check defaults:**
+
 ```tsx
 // Good: High contrast
 <p className="text-gray-900 dark:text-gray-100">Text</p>
@@ -374,6 +387,7 @@ Ensure sufficient contrast between text and background.
 ```
 
 **Muted text:**
+
 ```tsx
 // Use semantic muted foreground
 <p className="text-muted-foreground">
@@ -386,6 +400,7 @@ Ensure sufficient contrast between text and background.
 Always provide visible focus indicators:
 
 **Default focus ring:**
+
 ```tsx
 <Button className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
   Button
@@ -393,6 +408,7 @@ Always provide visible focus indicators:
 ```
 
 **Custom focus styles:**
+
 ```tsx
 <a href="#" className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:underline">
   Link
@@ -400,6 +416,7 @@ Always provide visible focus indicators:
 ```
 
 **Don't remove focus styles:**
+
 ```tsx
 // Avoid
 <button className="focus:outline-none">Bad</button>
@@ -423,6 +440,7 @@ Respect reduced motion preference:
 ```
 
 In components:
+
 ```tsx
 <div className="transition-all motion-reduce:transition-none">
   Respects user preference
@@ -431,24 +449,25 @@ In components:
 
 ## Testing Checklist
 
-- [ ] All interactive elements keyboard accessible
-- [ ] Focus indicators visible
-- [ ] Screen reader announces all content correctly
-- [ ] Form errors announced and associated
-- [ ] Color contrast meets WCAG AA
-- [ ] Semantic HTML used
-- [ ] ARIA labels provided for icon-only buttons
-- [ ] Modal/dialog focus trap works
-- [ ] Dropdown/select keyboard navigable
-- [ ] Live regions announce updates
-- [ ] Respects reduced motion preference
-- [ ] Works with browser zoom up to 200%
-- [ ] Tab order logical
-- [ ] Skip links provided for navigation
+- All interactive elements keyboard accessible
+- Focus indicators visible
+- Screen reader announces all content correctly
+- Form errors announced and associated
+- Color contrast meets WCAG AA
+- Semantic HTML used
+- ARIA labels provided for icon-only buttons
+- Modal/dialog focus trap works
+- Dropdown/select keyboard navigable
+- Live regions announce updates
+- Respects reduced motion preference
+- Works with browser zoom up to 200%
+- Tab order logical
+- Skip links provided for navigation
 
 ## Tools
 
 **Testing tools:**
+
 - Lighthouse accessibility audit
 - axe DevTools browser extension
 - NVDA/JAWS screen readers
@@ -456,6 +475,7 @@ In components:
 - Color contrast checkers (Contrast Ratio, WebAIM)
 
 **Automated testing:**
+
 ```bash
 npm install -D @axe-core/react
 ```
@@ -469,3 +489,4 @@ if (process.env.NODE_ENV === 'development') {
   })
 }
 ```
+
