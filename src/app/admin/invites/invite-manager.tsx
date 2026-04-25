@@ -97,7 +97,7 @@ function InviteRow({ invite, onRevoke }: { invite: Invite; onRevoke: (token: str
             type="button"
             onClick={copyLink}
             aria-label="Copy invite link"
-            className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
           </button>
@@ -106,7 +106,7 @@ function InviteRow({ invite, onRevoke }: { invite: Invite; onRevoke: (token: str
             onClick={handleRevoke}
             disabled={revoking}
             aria-label="Revoke invite"
-            className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+            className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
           >
             {revoking ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
           </button>
@@ -189,11 +189,17 @@ export function InviteManager() {
   const active = invites.filter((i) => !i.usedAt && (!i.expiresAt || new Date(i.expiresAt) >= new Date()));
   const past = invites.filter((i) => i.usedAt || (i.expiresAt && new Date(i.expiresAt) < new Date()));
 
+  const inputCls =
+    "min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20";
+
+  const sectionHeading =
+    "text-label font-semibold uppercase tracking-widest text-muted-foreground";
+
   return (
     <div className="space-y-8">
       {/* Mint form */}
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold text-foreground">New invite</h2>
+        <h2 className={sectionHeading}>New invite</h2>
         <form onSubmit={handleCreate} className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex-1 space-y-1.5">
             <label htmlFor="invite-email" className="text-xs font-medium text-foreground">
@@ -205,7 +211,7 @@ export function InviteManager() {
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
               placeholder="manager@example.com"
-              className="min-h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20"
+              className={inputCls}
             />
           </div>
           <div className="w-32 space-y-1.5">
@@ -220,13 +226,13 @@ export function InviteManager() {
               value={newDays}
               onChange={(e) => setNewDays(e.target.value)}
               placeholder="days"
-              className="min-h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20"
+              className={inputCls}
             />
           </div>
           <button
             type="submit"
             disabled={creating}
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-foreground px-4 text-sm font-medium text-background transition-[opacity,background-color] duration-150 hover:opacity-90 dark:hover:opacity-95 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {creating ? (
               <Loader2 size={14} className="animate-spin" />
@@ -248,7 +254,7 @@ export function InviteManager() {
             <button
               type="button"
               onClick={copyMinted}
-              className="shrink-0 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium text-success transition-colors hover:bg-success/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="shrink-0 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium text-success transition-[opacity,background-color] duration-150 hover:bg-success/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {copiedMinted ? <Check size={12} /> : <Copy size={12} />}
               {copiedMinted ? "Copied" : "Copy"}
@@ -259,7 +265,7 @@ export function InviteManager() {
 
       {/* Active invites */}
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-foreground">Active</h2>
+        <h2 className={sectionHeading}>Active</h2>
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 size={14} className="animate-spin" /> Loading…
@@ -278,7 +284,7 @@ export function InviteManager() {
       {/* Past invites */}
       {past.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-foreground">History</h2>
+          <h2 className={sectionHeading}>History</h2>
           <div className="space-y-2">
             {past.map((inv) => (
               <InviteRow key={inv.token} invite={inv} onRevoke={handleRevoke} />

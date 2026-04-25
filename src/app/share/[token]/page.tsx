@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { WorkspaceSidebar } from "@/components/shared/workspace-sidebar";
 import { KanbanBoard } from "@/components/shared/kanban-board";
 import { TopBar } from "@/components/shared/top-bar";
+import { AppChromeHeader } from "@/components/shared/app-chrome-header";
 import { WorkbenchWordmark } from "@/components/shared/workbench-wordmark";
 import type { BoardState } from "@/types/kanban";
 
@@ -46,26 +48,35 @@ export default function SharePage() {
 
   if (error) {
     return (
-      <main className="flex h-full flex-col items-center justify-center gap-2 px-4">
-        <div role="alert" className="flex flex-col items-center gap-2 text-center">
-          <p className="font-serif text-base font-semibold text-foreground">
-            Cannot open shared board
-          </p>
-          <p className="text-xs text-muted-foreground max-w-sm">{error}</p>
-        </div>
-      </main>
+      <div className="flex h-full flex-col">
+        <AppChromeHeader />
+        <main className="flex flex-1 items-center justify-center bg-board px-4">
+          <div role="alert" className="flex flex-col items-center gap-2 text-center">
+            <p className="font-wordmark text-base font-semibold text-foreground">
+              Cannot open shared board
+            </p>
+            <p className="text-xs text-muted-foreground max-w-sm">{error}</p>
+          </div>
+        </main>
+      </div>
     );
   }
 
   if (!board) {
     return (
-      <div
-        role="status"
-        aria-live="polite"
-        aria-busy
-        className="flex h-full items-center justify-center"
-      >
-        <span className="text-sm text-muted-foreground">Loading shared board…</span>
+      <div className="flex h-full flex-col">
+        <AppChromeHeader />
+        <div
+          role="status"
+          aria-live="polite"
+          aria-busy
+          className="flex flex-1 items-center justify-center bg-board"
+        >
+          <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            Loading shared board…
+          </span>
+        </div>
       </div>
     );
   }
@@ -101,7 +112,7 @@ export default function SharePage() {
             />
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
-              <p className="font-serif text-base font-semibold text-foreground">
+              <p className="font-wordmark text-base font-semibold text-foreground">
                 Nothing here yet
               </p>
               <p className="text-xs text-muted-foreground max-w-sm">

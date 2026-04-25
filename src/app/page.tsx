@@ -16,6 +16,7 @@ import { WorkspaceSidebar } from "@/components/shared/workspace-sidebar";
 import { KanbanBoard } from "@/components/shared/kanban-board";
 import { TopBar } from "@/components/shared/top-bar";
 import { WorkbenchWordmark } from "@/components/shared/workbench-wordmark";
+import { AppChromeHeader } from "@/components/shared/app-chrome-header";
 import type { SyncStatus } from "@/components/shared/top-bar";
 import { TweaksPanel } from "@/components/shared/tweaks-panel";
 import type { BoardState } from "@/types/kanban";
@@ -26,18 +27,7 @@ import { cn } from "@/lib/utils";
 function LoadingShell({ message }: { message: string }) {
   return (
     <div className="flex h-full flex-col">
-      <header
-        className={cn(
-          "flex h-11 shrink-0 items-stretch border-b border-border",
-          "bg-sidebar/95 backdrop-blur-sm supports-[backdrop-filter]:bg-sidebar/90",
-          "dark:bg-sidebar dark:backdrop-blur-none dark:supports-[backdrop-filter]:bg-sidebar",
-        )}
-      >
-        <div className="flex w-60 shrink-0 items-center px-4 sm:px-6">
-          <WorkbenchWordmark />
-        </div>
-        <div className="flex flex-1 items-center px-4 sm:px-6" />
-      </header>
+      <AppChromeHeader />
       <div
         role="status"
         aria-live="polite"
@@ -421,7 +411,7 @@ function BoardApp() {
             />
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
-              <p className="font-serif text-base font-semibold text-foreground">
+              <p className="font-wordmark text-base font-semibold text-foreground">
                 No workspace yet
               </p>
               <p className="text-xs text-muted-foreground max-w-sm">

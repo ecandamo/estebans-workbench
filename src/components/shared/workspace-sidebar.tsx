@@ -152,23 +152,23 @@ export function WorkspaceSidebar({
               <label htmlFor={`${newWorkspaceFormId}-name`} className="sr-only">
                 Workspace name
               </label>
-              <input
-                id={`${newWorkspaceFormId}-name`}
-                autoFocus
-                autoComplete="off"
-                className="w-full text-sm bg-muted/50 border border-border rounded-md px-2.5 py-1.5 outline-none focus:border-accent"
-                placeholder="Workspace name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") submitNewWorkspace();
-                  if (e.key === "Escape") resetAddForm();
-                }}
-              />
+          <input
+            id={`${newWorkspaceFormId}-name`}
+            autoFocus
+            autoComplete="off"
+            className="w-full rounded-lg border border-border bg-background px-2.5 py-1.5 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20"
+            placeholder="Workspace name"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") submitNewWorkspace();
+              if (e.key === "Escape") resetAddForm();
+            }}
+          />
               <div className="space-y-1">
                 <p
                   id={`${newWorkspaceFormId}-columns-label`}
-                  className="text-label font-semibold uppercase tracking-wider text-muted-foreground px-0.5"
+                  className="text-label font-semibold uppercase tracking-widest text-muted-foreground px-0.5"
                 >
                   Columns
                 </p>
@@ -184,7 +184,7 @@ export function WorkspaceSidebar({
                       </label>
                       <input
                         id={`${newWorkspaceFormId}-stage-${index}`}
-                        className="min-w-0 flex-1 text-xs bg-background border border-border rounded px-2 py-1 outline-none focus:border-accent"
+                        className="min-w-0 flex-1 text-xs rounded-md border border-border bg-background px-2 py-1 text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20"
                         placeholder={`Stage ${index + 1}`}
                         value={row}
                         onChange={(e) => updateStageRow(index, e.target.value)}
@@ -216,7 +216,7 @@ export function WorkspaceSidebar({
               <div className="flex gap-2 pt-0.5">
                 <button
                   type="button"
-                  className="text-xs px-2.5 py-1 rounded-md bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-40"
+                  className="text-xs px-2.5 py-1 rounded-md bg-foreground text-background transition-[opacity,background-color] duration-150 hover:opacity-90 dark:hover:opacity-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={submitNewWorkspace}
                   disabled={
                     !newName.trim() || stageInputs.every((s) => !s.trim())
@@ -226,7 +226,7 @@ export function WorkspaceSidebar({
                 </button>
                 <button
                   type="button"
-                  className="text-xs px-2.5 py-1 rounded-md text-muted-foreground hover:text-foreground"
+                  className="text-xs px-2.5 py-1 rounded-md text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={resetAddForm}
                 >
                   Cancel
@@ -236,7 +236,7 @@ export function WorkspaceSidebar({
           ) : (
             <button
               type="button"
-              className="w-full text-xs text-muted-foreground hover:text-primary transition-colors text-left"
+              className="w-full text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={() => {
                 setStageInputs([...DEFAULT_NEW_WORKSPACE_STAGE_NAMES]);
                 setAdding(true);

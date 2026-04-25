@@ -16,7 +16,7 @@ const sourceSans = Source_Sans_3({
   display: "swap",
 });
 
-/** Display / wordmark — pairs with Source Sans (shared Adobe lineage). */
+/** Available for prose / long-form content if needed; not used for headings. */
 const sourceSerif = Source_Serif_4({
   variable: "--font-serif",
   subsets: ["latin"],
@@ -32,7 +32,7 @@ const sourceCode = Source_Code_Pro({
   display: "swap",
 });
 
-/** Sidebar app title only — distinct from body sans. */
+/** Editorial headings and wordmark — all h1/h2 level text uses this for a consistent technical voice. */
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-wordmark",
   subsets: ["latin"],

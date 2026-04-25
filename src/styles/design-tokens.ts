@@ -9,8 +9,8 @@
  * Keep this file in sync manually as a human-readable reference.
  *
  * App chrome (see src/app/layout.tsx + src/app/globals.css): Source Sans 3 (body),
- * Source Serif 4 (display / headings), Source Code Pro (--font-mono), JetBrains Mono
- * (wordmark via --font-wordmark / font-wordmark).
+ * JetBrains Mono (all editorial headings + wordmark via --font-wordmark / font-wordmark),
+ * Source Code Pro (--font-mono). Source Serif 4 is loaded but reserved for prose/long-form only.
  *
  * Micro type scale in globals.css (@utility): text-chip → text-label → text-meta → text-xs.
  *
@@ -119,9 +119,9 @@ export const designTokens = {
   },
 
   fonts: {
-    /** Legacy reference; live heading font: Source Serif 4 (see layout.tsx). */
+    /** Live heading font: JetBrains Mono (font-wordmark). Used for all h1/editorial text. */
     heading: {
-      family: "'Plus Jakarta Sans', sans-serif",
+      family: "'JetBrains Mono', monospace",
       weights: { medium: 500, semibold: 600, bold: 700 },
       letterSpacing: '-0.025em',
     },

@@ -2,60 +2,17 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
-import { Sun, Moon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
-import { WorkbenchWordmark } from "@/components/shared/workbench-wordmark";
-import { useIsClient } from "@/hooks/use-is-client";
-import { cn } from "@/lib/utils";
+import { AppChromeHeader } from "@/components/shared/app-chrome-header";
 
 type Mode = "signin" | "signup";
-
-const headerCls = cn(
-  "flex h-11 shrink-0 items-stretch border-b border-border",
-  "bg-sidebar/95 backdrop-blur-sm supports-[backdrop-filter]:bg-sidebar/90",
-  "dark:bg-sidebar dark:backdrop-blur-none dark:supports-[backdrop-filter]:bg-sidebar",
-);
-
-const iconBtn =
-  "flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
-
-function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const isClient = useIsClient();
-  if (!isClient) return <div className="size-9 shrink-0" />;
-  const isDark = resolvedTheme === "dark";
-  return (
-    <button
-      type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={iconBtn}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-    >
-      {isDark ? <Sun size={16} aria-hidden /> : <Moon size={16} aria-hidden />}
-    </button>
-  );
-}
-
-/** Shared chrome header — same visual as TopBar but without board actions. */
-function LoginHeader() {
-  return (
-    <header className={headerCls}>
-      <div className="flex w-60 shrink-0 items-center px-4 sm:px-6">
-        <WorkbenchWordmark />
-      </div>
-      <div className="flex flex-1 items-center justify-end px-4 sm:px-6">
-        <ThemeToggle />
-      </div>
-    </header>
-  );
-}
 
 /** Shown while the Suspense boundary resolves search params. */
 function LoginFallback() {
   return (
     <div className="flex h-full flex-col">
-      <LoginHeader />
+      <AppChromeHeader />
       <div
         role="status"
         aria-live="polite"
@@ -141,7 +98,7 @@ function LoginForm() {
 
   return (
     <div className="flex h-full flex-col">
-      <LoginHeader />
+      <AppChromeHeader />
 
       <div className="flex flex-1 items-center justify-center overflow-y-auto bg-board px-4 py-10">
         <div className="w-full max-w-sm rounded-xl border border-border bg-card shadow-[var(--shadow-card)] p-6 space-y-6">

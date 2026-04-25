@@ -124,7 +124,7 @@ function AccountMenu({
               <a
                 href="/admin/invites"
                 onClick={() => setOpen(false)}
-                className="flex w-full items-center gap-2 px-3 py-2 text-xs text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                className="flex w-full items-center gap-2 px-3 py-2 text-xs text-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
               >
                 <Settings2 size={14} className="shrink-0 text-muted-foreground" />
                 Manage invites

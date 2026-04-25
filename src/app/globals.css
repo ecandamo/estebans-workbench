@@ -12,7 +12,7 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-wordmark: var(--font-wordmark);
-  --font-heading: var(--font-serif);
+  --font-heading: var(--font-wordmark);
   --font-serif: var(--font-serif);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
