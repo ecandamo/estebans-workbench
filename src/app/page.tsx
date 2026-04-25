@@ -9,6 +9,7 @@ import {
   startTransition,
 } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { createEmptyWorkspace, saveBoard } from "@/lib/kanban-data";
 import { useSession, signOut } from "@/lib/auth-client";
 import { WorkspaceSidebar } from "@/components/shared/workspace-sidebar";
@@ -19,6 +20,38 @@ import type { SyncStatus } from "@/components/shared/top-bar";
 import { TweaksPanel } from "@/components/shared/tweaks-panel";
 import type { BoardState } from "@/types/kanban";
 import { isAdminEmail } from "@/lib/admin";
+import { cn } from "@/lib/utils";
+
+/** Chrome skeleton shown while the session or board is resolving. Matches TopBar visually. */
+function LoadingShell({ message }: { message: string }) {
+  return (
+    <div className="flex h-full flex-col">
+      <header
+        className={cn(
+          "flex h-11 shrink-0 items-stretch border-b border-border",
+          "bg-sidebar/95 backdrop-blur-sm supports-[backdrop-filter]:bg-sidebar/90",
+          "dark:bg-sidebar dark:backdrop-blur-none dark:supports-[backdrop-filter]:bg-sidebar",
+        )}
+      >
+        <div className="flex w-60 shrink-0 items-center px-4 sm:px-6">
+          <WorkbenchWordmark />
+        </div>
+        <div className="flex flex-1 items-center px-4 sm:px-6" />
+      </header>
+      <div
+        role="status"
+        aria-live="polite"
+        aria-busy
+        className="flex flex-1 items-center justify-center bg-board"
+      >
+        <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+          {message}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 const SAVE_DEBOUNCE_MS = 800;
 const SAVE_SAVED_RESET_MS = 2500;
@@ -291,47 +324,43 @@ function BoardApp() {
   }
 
   if (sessionLoading || !session) {
-    return (
-      <div
-        role="status"
-        aria-live="polite"
-        aria-busy
-        className="flex h-full items-center justify-center"
-      >
-        <span className="text-sm text-muted-foreground">{COPY.loadingSession}</span>
-      </div>
-    );
+    return <LoadingShell message={COPY.loadingSession} />;
   }
 
   if (workbenchLoading) {
-    return (
-      <div
-        role="status"
-        aria-live="polite"
-        aria-busy
-        className="flex h-full items-center justify-center"
-      >
-        <span className="text-sm text-muted-foreground">{COPY.loadingWorkbench}</span>
-      </div>
-    );
+    return <LoadingShell message={COPY.loadingWorkbench} />;
   }
 
   if (loadError || !board) {
     return (
-      <main className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
-        <p className="text-sm text-destructive max-w-md" role="alert">
-          {loadError ?? COPY.loadFailedFallback}
-        </p>
-        <button
-          type="button"
-          onClick={() => {
-            setLoadNonce((n) => n + 1);
-          }}
-          className="min-h-11 rounded-lg border border-border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <div className="flex h-full flex-col">
+        <header
+          className={cn(
+            "flex h-11 shrink-0 items-stretch border-b border-border",
+            "bg-sidebar/95 backdrop-blur-sm supports-[backdrop-filter]:bg-sidebar/90",
+            "dark:bg-sidebar dark:backdrop-blur-none dark:supports-[backdrop-filter]:bg-sidebar",
+          )}
         >
-          Try again
-        </button>
-      </main>
+          <div className="flex w-60 shrink-0 items-center px-4 sm:px-6">
+            <WorkbenchWordmark />
+          </div>
+          <div className="flex flex-1 items-center px-4 sm:px-6" />
+        </header>
+        <main className="flex flex-1 flex-col items-center justify-center gap-4 bg-board px-6 text-center">
+          <p className="text-sm text-destructive max-w-md" role="alert">
+            {loadError ?? COPY.loadFailedFallback}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setLoadNonce((n) => n + 1);
+            }}
+            className="min-h-11 rounded-lg border border-border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Try again
+          </button>
+        </main>
+      </div>
     );
   }
 
@@ -412,14 +441,7 @@ export default function Home() {
   return (
     <Suspense
       fallback={
-        <div
-          role="status"
-          aria-live="polite"
-          aria-busy
-          className="flex h-full items-center justify-center"
-        >
-          <span className="text-sm text-muted-foreground">{COPY.loadingSession}</span>
-        </div>
+        <LoadingShell message={COPY.loadingSession} />
       }
     >
       <BoardApp />
