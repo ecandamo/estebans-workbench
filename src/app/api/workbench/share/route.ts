@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+
+export const runtime = "nodejs";
 import { sql } from "@/lib/db";
 import type { NextRequest } from "next/server";
 

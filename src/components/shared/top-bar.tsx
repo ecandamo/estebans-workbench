@@ -6,17 +6,25 @@ import {
   Link2,
   Link2Off,
   Loader2,
+  LogOut,
+  Settings2,
   Share2,
   Sliders,
   Sun,
   Moon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useIsClient } from "@/hooks/use-is-client";
 import { cn } from "@/lib/utils";
 
 export type SyncStatus = "idle" | "saving" | "saved" | "error";
+
+type AccountInfo = {
+  name: string;
+  email: string;
+  isAdmin: boolean;
+};
 
 type Props = {
   /** Left strip (e.g. workbench wordmark) — one unified header row with toolbar */
@@ -37,12 +45,110 @@ type Props = {
   shareEnabled?: boolean;
   onGenerateShare?: () => Promise<void>;
   onRevokeShare?: () => Promise<void>;
+  // Account
+  account?: AccountInfo;
+  onSignOut?: () => Promise<void>;
 };
 
 const iconBtn =
   "flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 const textBtn =
   "flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs text-muted-foreground transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
+function initials(name: string): string {
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((w) => w[0] ?? "")
+    .join("")
+    .toUpperCase();
+}
+
+function AccountMenu({
+  account,
+  onSignOut,
+}: {
+  account: AccountInfo;
+  onSignOut?: () => Promise<void>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  async function handleSignOut() {
+    if (!onSignOut) return;
+    setSigningOut(true);
+    try {
+      await onSignOut();
+    } finally {
+      setSigningOut(false);
+    }
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((s) => !s)}
+        aria-label="Account menu"
+        aria-expanded={open}
+        className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {initials(account.name)}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full z-50 mt-2 w-56 origin-top-right rounded-xl border border-border bg-popover shadow-lg ring-1 ring-black/5">
+          {/* User info */}
+          <div className="px-3 py-3 border-b border-border">
+            <p className="text-sm font-medium text-foreground leading-none truncate">
+              {account.name}
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground truncate">{account.email}</p>
+          </div>
+
+          {/* Actions */}
+          <div className="py-1">
+            {account.isAdmin && (
+              <a
+                href="/admin/invites"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 px-3 py-2 text-xs text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                <Settings2 size={14} className="shrink-0 text-muted-foreground" />
+                Manage invites
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="flex w-full items-center gap-2 px-3 py-2 text-xs text-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+            >
+              {signingOut ? (
+                <Loader2 size={14} className="shrink-0 animate-spin text-muted-foreground" />
+              ) : (
+                <LogOut size={14} className="shrink-0 text-muted-foreground" />
+              )}
+              {signingOut ? "Signing out…" : "Sign out"}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function TopBar({
   leading,
@@ -59,6 +165,8 @@ export function TopBar({
   shareEnabled,
   onGenerateShare,
   onRevokeShare,
+  account,
+  onSignOut,
 }: Props) {
   const [copied, setCopied] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
@@ -225,6 +333,10 @@ export function TopBar({
           <span className="inline-flex h-7 items-center rounded-full border border-border bg-muted/50 px-2 py-0.5 text-label font-medium text-muted-foreground">
             Read-only
           </span>
+        )}
+
+        {account && !readOnly && (
+          <AccountMenu account={account} onSignOut={onSignOut} />
         )}
       </div>
     </>

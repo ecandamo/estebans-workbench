@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { createEmptyWorkspace, saveBoard } from "@/lib/kanban-data";
-import { useSession } from "@/lib/auth-client";
+import { useSession, signOut } from "@/lib/auth-client";
 import { WorkspaceSidebar } from "@/components/shared/workspace-sidebar";
 import { KanbanBoard } from "@/components/shared/kanban-board";
 import { TopBar } from "@/components/shared/top-bar";
@@ -18,6 +18,7 @@ import { WorkbenchWordmark } from "@/components/shared/workbench-wordmark";
 import type { SyncStatus } from "@/components/shared/top-bar";
 import { TweaksPanel } from "@/components/shared/tweaks-panel";
 import type { BoardState } from "@/types/kanban";
+import { isAdminEmail } from "@/lib/admin";
 
 const SAVE_DEBOUNCE_MS = 800;
 const SAVE_SAVED_RESET_MS = 2500;
@@ -342,7 +343,7 @@ function BoardApp() {
     <div className="flex h-full flex-col overflow-hidden">
       <div className="relative z-20 shrink-0">
         <TopBar
-          leading={<WorkbenchWordmark />}
+          leading={<WorkbenchWordmark ownerName={session.user.name} />}
           readOnly={false}
           showTweaks={showTweaks}
           onToggleTweaks={() => setShowTweaks((s) => !s)}
@@ -356,6 +357,15 @@ function BoardApp() {
           shareEnabled={shareEnabled}
           onGenerateShare={handleGenerateShare}
           onRevokeShare={handleRevokeShare}
+          account={{
+            name: session.user.name,
+            email: session.user.email,
+            isAdmin: isAdminEmail(session.user.email),
+          }}
+          onSignOut={async () => {
+            await signOut();
+            router.replace("/login");
+          }}
         />
 
         {showTweaks && activeWorkspace && (

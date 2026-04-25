@@ -14,6 +14,7 @@ const MSG_NETWORK =
 export default function SharePage() {
   const { token } = useParams<{ token: string }>();
   const [board, setBoard] = useState<BoardState | null>(null);
+  const [ownerName, setOwnerName] = useState<string | null>(null);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState<string | null>(
     null
   );
@@ -34,6 +35,7 @@ export default function SharePage() {
       .then((data) => {
         if (data) {
           setBoard(data.board);
+          setOwnerName(data.ownerName ?? null);
           setActiveWorkspaceId(data.board.activeWorkspaceId);
         }
       })
@@ -75,7 +77,7 @@ export default function SharePage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <TopBar
-        leading={<WorkbenchWordmark />}
+        leading={<WorkbenchWordmark ownerName={ownerName} />}
         readOnly
         showTweaks={false}
         onToggleTweaks={() => {}}

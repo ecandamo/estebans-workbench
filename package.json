@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "reset-password": "node --env-file=.env.local scripts/reset-user-password.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

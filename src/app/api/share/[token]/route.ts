@@ -14,10 +14,11 @@ export async function GET(
   }
 
   const rows = await sql`
-    SELECT payload
-    FROM workbench
-    WHERE share_token = ${token}
-      AND share_enabled = TRUE
+    SELECT w.payload, u.name AS owner_name
+    FROM workbench w
+    JOIN "user" u ON u.id = w.owner_id
+    WHERE w.share_token = ${token}
+      AND w.share_enabled = TRUE
     LIMIT 1
   `;
 
@@ -26,8 +27,9 @@ export async function GET(
   }
 
   const board = normalizeBoardState(rows[0].payload as BoardState);
+  const ownerName = (rows[0].owner_name as string | null) ?? null;
   return NextResponse.json(
-    { board },
+    { board, ownerName },
     { headers: { "Cache-Control": "public, max-age=30, stale-while-revalidate=60" } }
   );
 }

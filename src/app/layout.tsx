@@ -41,8 +41,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Esteban's Workbench",
-  description: "Personal Kanban — workspaces for everything I'm building",
+  title: "Workbench",
+  description: "Personal Kanban — workspaces for everything you're building",
 };
 
 export default function RootLayout({

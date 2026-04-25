@@ -1,19 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { signIn, signUp } from "@/lib/auth-client";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "@/lib/auth-client";
 
 type Mode = "signin" | "signup";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
-  const [mode, setMode] = useState<Mode>("signin");
+  const searchParams = useSearchParams();
+  const inviteToken = searchParams.get("invite");
+
+  const [mode, setMode] = useState<Mode>(inviteToken ? "signup" : "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // When invite token disappears or appears, re-sync the mode
+  useEffect(() => {
+    if (!inviteToken && mode === "signup") setMode("signin");
+    if (inviteToken && mode === "signin") setMode("signup");
+  }, [inviteToken]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,12 +31,28 @@ export default function LoginPage() {
 
     try {
       if (mode === "signup") {
-        const result = await signUp.email({ email, password, name });
-        if (result.error) {
-          setError(
-            result.error.message ??
-              "Something didn't work. Check your details and try again."
-          );
+        if (!inviteToken) {
+          setError("An invite link is required to create an account.");
+          return;
+        }
+
+        const res = await fetch(`/api/invites/${encodeURIComponent(inviteToken)}/redeem`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, name }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({})) as { error?: string };
+          setError(data.error ?? "Something didn't work. Check your details and try again.");
+          return;
+        }
+
+        // Sign in immediately after account creation so the session cookie is set
+        const signInResult = await signIn.email({ email, password });
+        if (signInResult.error) {
+          setError("Account created — please sign in.");
+          setMode("signin");
           return;
         }
       } else {
@@ -40,6 +65,7 @@ export default function LoginPage() {
           return;
         }
       }
+
       router.push("/");
       router.refresh();
     } finally {
@@ -48,13 +74,14 @@ export default function LoginPage() {
   }
 
   const fieldErrorDesc = error ? "login-form-error" : undefined;
+  const canSignUp = Boolean(inviteToken);
 
   return (
     <main className="flex h-full items-center justify-center bg-background">
       <div className="w-full max-w-sm space-y-6 px-4">
         <div className="space-y-1">
           <h1 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-            Esteban&apos;s Workbench
+            Workbench
           </h1>
           <p className="text-sm text-muted-foreground">
             {mode === "signin"
@@ -63,11 +90,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-3"
-          aria-busy={loading}
-        >
+        <form onSubmit={handleSubmit} className="space-y-3" aria-busy={loading}>
           {mode === "signup" && (
             <div className="space-y-1.5">
               <label htmlFor="name" className="text-xs font-medium text-foreground">
@@ -80,7 +103,7 @@ export default function LoginPage() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Esteban"
+                placeholder="Your name"
                 aria-invalid={!!error}
                 aria-describedby={fieldErrorDesc}
                 className="min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/20"
@@ -146,17 +169,36 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-muted-foreground">
-          {mode === "signin" ? "No account yet?" : "Already have an account?"}{" "}
-          <button
-            type="button"
-            onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setError(null); }}
-            className="min-h-11 min-w-[44px] font-medium text-foreground underline-offset-2 hover:underline"
-          >
-            {mode === "signin" ? "Sign up" : "Sign in"}
-          </button>
-        </p>
+        {canSignUp && (
+          <p className="text-center text-xs text-muted-foreground">
+            {mode === "signin" ? "Have an invite?" : "Already have an account?"}{" "}
+            <button
+              type="button"
+              onClick={() => {
+                setMode(mode === "signin" ? "signup" : "signin");
+                setError(null);
+              }}
+              className="min-h-11 min-w-[44px] font-medium text-foreground underline-offset-2 hover:underline"
+            >
+              {mode === "signin" ? "Sign up" : "Sign in"}
+            </button>
+          </p>
+        )}
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-full items-center justify-center">
+          <span className="text-sm text-muted-foreground">Loading…</span>
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

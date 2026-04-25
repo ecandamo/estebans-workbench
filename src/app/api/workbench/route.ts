@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+
+export const runtime = "nodejs";
 import { sql } from "@/lib/db";
 import { normalizeBoardState, DEFAULT_BOARD_STATE } from "@/lib/kanban-data";
 import type { BoardState } from "@/types/kanban";
